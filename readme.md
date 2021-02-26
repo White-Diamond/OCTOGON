@@ -6,7 +6,7 @@
    ..                              .    
    :                                :   
    :                                :   
-   :          <b>OCTOGON<b>             :   
+   :            <b>OCTOGON<b>             :   
    :                                :   
    :                                :   
    .                               ..   
