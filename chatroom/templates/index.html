@@ -5,10 +5,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
     <style>
         body, html{
             height: 100%;
             width: 100%;
+        }
+        .my-container{
+            border: 3px solid green;
+        }
+        .my-row{
+            border: 3px solid red;
+        }
+        .my-col{
+            border: 3px solid blue;
+        }
+        .my-card-header{
+            height: 5%;
+        }
+        .my-card-footer{
+            height: 11%;
         }
     </style>
     <title>Document</title>
@@ -23,38 +39,42 @@
                 <div class="card h-100 rounded-0">
                     <div class="card-header">
                         <div class="input-group">
-                            <button type="button" class="btn btn-secondary">
-                                <i class="fas fa-search"></i>
-                            </button>
-                            <div class="form-outline w-75">
-                                <input type="search" class="form-control" placeholder="Search..."/>
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-secondary"><i class="fas fa-search"></i></button>
                             </div>
+                            <input type="search" class="form-control" placeholder="Search..."/>
                         </div>
                     </div>
-                    <div class="card-body pt-0 px-2">
+                    <div class="card-body p-0">
                         <div class="list-group list-group-flush">
-                            <button type="button" class="list-group-item list-group-item-action">b1</button>
-                            <button type="button" class="list-group-item list-group-item-action">b2</button>
-                            <button type="button" class="list-group-item list-group-item-action">b3</button>
-                            <button type="button" class="list-group-item list-group-item-action">b4</button>
+                            <button type="button" class="d-flex list-group-item list-group-item-action justify-content-between">
+                                <span>
+                                    <i class="fas fa-user-circle mr-5"></i>
+                                    <span>Josh Bender</span>
+                                </span>
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </div>
+                    </div>
+                    <div class="d-flex card-footer align-items-center my-card-footer">
+                        <button class="btn btn-secondary"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
 
             </div>
             <div class="col-9 p-0 my-col">
 
-                <!--Message area and chat card-->
+                <!--Chat card-->
                 <div class="card h-100 rounded-0">
-                    <div class="card-header">
+                    <div class="card-header my-card-header">
                         <p class="p-0 m-0">To: ...</p>
                     </div>
                     <div class="card-body">
                         ...
                     </div>
-                    <div class="card-footer">
-                        <div class="form-group align-items-end green-border-focus">
-                            <textarea class="form-control" id="exampleFormControlTextarea5" placeholder="Message..." rows="3"></textarea>
+                    <div class="card-footer my-card-footer">
+                        <div class="form-group">
+                            <textarea class="form-control" placeholder="Message..." rows="2"></textarea>
                         </div>
                     </div>
                 </div>
@@ -63,7 +83,8 @@
         </div>
     </div>
 
-    <script src="https://kit.fontawesome.com/8a16c35037.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 </body>
 </html>
+
+<!--EVERY SINGLE ELEMENT SHOULD HAVE A 'MY-<ELEM-NAM>' CLASS SO THAT WE CAN DO OUR OWN STYLES ON IT-->
