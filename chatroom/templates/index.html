@@ -11,21 +11,6 @@
             height: 100%;
             width: 100%;
         }
-        .my-container{
-            border: 3px solid green;
-        }
-        .my-row{
-            border: 3px solid red;
-        }
-        .my-col{
-            border: 3px solid blue;
-        }
-        .my-card-header{
-            height: 5%;
-        }
-        .my-card-footer{
-            height: 11%;
-        }
     </style>
     <title>Document</title>
 </head>
@@ -35,29 +20,40 @@
         <div class="row h-100 my-row">
             <div class="col-3 p-0 my-col">
 
+                <!--
+                    1.) Make sidebar card a bluish color with white text
+                    2.) Translucent badge counters
+                    3.) Make search bar translucent
+                    4.) Start on text area and remember to float
+                -->
+
                 <!--Sidebar card-->
                 <div class="card h-100 rounded-0">
                     <div class="card-header">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <button type="button" class="btn btn-secondary"><i class="fas fa-search"></i></button>
-                            </div>
-                            <input type="search" class="form-control" placeholder="Search..."/>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white border" id="inputGroup-sizing-sm">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="search" class="form-control" placeholder="Type to search..."/>
                         </div>
                     </div>
                     <div class="card-body p-0">
                         <div class="list-group list-group-flush">
-                            <button type="button" class="d-flex list-group-item list-group-item-action justify-content-between">
+                            <button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
                                 <span>
-                                    <i class="fas fa-user-circle mr-5"></i>
+                                    <i class="fas fa-user-circle me-2"></i>
                                     <span>Josh Bender</span>
                                 </span>
-                                <i class="fas fa-trash-alt"></i>
+                                <span class="badge bg-primary rounded-pill">14</span>
+                            </button>
+                            <button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
+                                <span>
+                                    <i class="fas fa-user-circle me-2"></i>
+                                    <span>Ben Bender</span>
+                                </span>
+                                <span class="badge bg-primary rounded-pill">2</span>
                             </button>
                         </div>
-                    </div>
-                    <div class="d-flex card-footer align-items-center my-card-footer">
-                        <button class="btn btn-secondary"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
 
@@ -66,16 +62,14 @@
 
                 <!--Chat card-->
                 <div class="card h-100 rounded-0">
-                    <div class="card-header my-card-header">
-                        <p class="p-0 m-0">To: ...</p>
+                    <div class="card-header">
+                        <p class="fs-6 p-0 m-0">To: ...</p>
                     </div>
                     <div class="card-body">
                         ...
                     </div>
-                    <div class="card-footer my-card-footer">
-                        <div class="form-group">
-                            <textarea class="form-control" placeholder="Message..." rows="2"></textarea>
-                        </div>
+                    <div class="card-footer">
+                        <textarea class="form-control" placeholder="Message..." rows="2"></textarea>
                     </div>
                 </div>
 
@@ -86,5 +80,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 </body>
 </html>
-
-<!--EVERY SINGLE ELEMENT SHOULD HAVE A 'MY-<ELEM-NAM>' CLASS SO THAT WE CAN DO OUR OWN STYLES ON IT-->
