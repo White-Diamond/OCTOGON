@@ -3,10 +3,10 @@ from django.http import JsonResponse
 
 # Create your views here.
 def chat_page(request):
-    return JsonResponse({'foo': 'chat_page'})
+    return render(request, "index.html")
 
-def retreive_json(request):
-    return JsonResponse({'foo':'retreive_json'})
+def retrieve_json(request):
+    return JsonResponse({'foo':'retrieve_json'})
 
 def load_json(request):
     return JsonResponse({'foo':'load_json'})
