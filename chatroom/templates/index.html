@@ -20,9 +20,6 @@
         .my-col{
             border: 3px solid blue;
         }
-        .card-footer{
-            height: 55px;
-        }
         .card-header{
             height: 50px;
         }
@@ -45,6 +42,16 @@
         .separator{
             clear: both;
             background-color: gray;
+        }
+        .message-box{
+            max-height: 150px;
+            overflow: auto;
+        }
+        [contenteditable=true]:empty:before {
+            content: attr(placeholder);
+            pointer-events: none;
+            color: #636c72;
+            display: block; /* For Firefox */
         }
     </style>
     <title>Document</title>
@@ -73,25 +80,9 @@
                         </div>
                     </div>
                     <div class="card-body overflow-scroll p-0" style="height: 1px;">
-                        <div class="list-group list-group-flush">
+                        <div class="list-group list-group-flush" id="user-area">
                             <!--Online users go here-->
-                            <button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
-                                <span>
-                                    <i class="fas fa-user-circle me-2"></i>
-                                    <span>Ben Bender</span>
-                                </span>
-                                <span class="badge bg-primary rounded-pill">2</span>
-                            </button>
-                            <button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
-                                <span>
-                                    <i class="fas fa-user-circle me-2"></i>
-                                    <span>Ben Bender</span>
-                                </span>
-                                <span class="badge bg-primary rounded-pill">2</span>
-                            </button>
                         </div>
-                    </div>
-                    <div class="card-footer">
                     </div>
                 </div>
 
@@ -100,19 +91,14 @@
 
                 <!--Chat card-->
                 <div class="card h-100 rounded-0">
-                    <div class="card-header">
+                    <div class="card-header" id="recipient-area">
                         <!--User name goes here-->
-                        <p class="fs-4 p-0 m-0">To: <span>Jacob Bender</span></p>
                     </div>
-                    <div class="card-body overflow-auto" style="height: 1px;">
+                    <div class="card-body overflow-auto" style="height: 1px;" id="message-area">
                         <!--Messages go here-->
-                        <p class="chat-bubble sent text-wrap">Hello, my name is Josh</p>
-                        <div class="separator"></div>
-                        <p class="chat-bubble received text-wrap">Hi Josh! It's nice to meet you. What's new??</p>
-                        <div class="separator"></div>
                     </div>
                     <div class="card-footer">
-                        <input type="text" class="form-control" placeholder="Message...">
+                        <div class="form-control message-box" contenteditable="true" placeholder="Message..."></div>
                     </div>
                 </div>
 
@@ -122,23 +108,62 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
     <script>
-        console.log("hi");
+        // define users
+        const users = [
+            {
+                fullName: "Josh Bender",
+                username: "joshua.caleb.bender@gmail.com"
+            },
+            {
+                fullName: "Jacob Bender",
+                username: "jbender321@gmail.com"
+            }
+        ];
+
+        // cache DOM elements
+        let userArea_div = document.getElementById("user-area");
+        let recipientArea_div = document.getElementById("recipient-area");
+        let messageArea_div = document.getElementById("message-area");
+
+        // HTML templatess
+        let to = "";
+        let user = "";
+        let message = "";
+        let count = 0;
+
+        let userElem = `<button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
+                            <span>
+                                <i class="fas fa-user-circle me-2"></i>
+                                <span>${user}</span>
+                            </span>
+                            <span class="badge bg-primary rounded-pill">${count}</span>
+                        </button>`;
+        let toElem = `<p class="fs-4 p-0 m-0">To: <span id="recipient-area">${to}</span></p>`
+        let messageElem = `<p class="chat-bubble received text-wrap">${message}</p>
+                           <div class="separator"></div>`;
+        
+        // attach event handlers
+        function main(){
+            userArea_div.innerHTML = userElem; // make this into a function where I can loop through all online users and pass them to it
+            console.log(recipientArea_div);
+            console.log(userArea_div);
+            console.log(messageArea_div);
+        }
+
+        main();
+    
+        /*
+        - "type to search input" element
+        - "online user sidebar button" element*
+        - "message input" element (ajax)
+        - poll the database for unseen messages (ajax)
+            - if user is not in focus on new message: notification badge will be incremented
+            - if user is in focus on new message    : user will see live update of new message  
+        */
 
         /*
-        * 0. For development- define a set of online users
-        *
-        * 1. Cache the DOM
-        *
-        * 2. Define appropriate html templates/views to embed
-        *
-        * 2. Attach event handlers to specific HTML elements
-        *
-        *   - "type to search input" element
-        *   - "online user sidebar button" element*
-        *   - "message input" element (ajax)
-        *   - poll the database for unseen messages (ajax)
-        *       - if user is not in focus on new message: notification badge will be incremented
-        *       - if user is in focus on new message    : user will see live update of new message  
+        - bi-directional chat
+        - chat is removed when users leave session
         */
         
     </script>
