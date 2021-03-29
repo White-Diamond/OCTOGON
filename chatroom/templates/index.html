@@ -11,6 +11,40 @@
             height: 100%;
             width: 100%;
         }
+        .my-container{
+        }
+        .my-row{
+            border: 3px solid red;
+        }
+        .my-col{
+            border: 3px solid blue;
+        }
+        .card-footer{
+            height: 55px;
+        }
+        .card-header{
+            height: 50px;
+        }
+        .chat-bubble{
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .sent{
+            float: right;
+            color: white;
+            max-width: 40rem;
+            background-color: rgba(61, 139, 241, 1);
+        }
+        .received{
+            float: left;
+            color: black;
+            max-width: 40rem;
+            background-color: rgba(229, 229, 234, 1);
+        }
+        .separator{
+            clear: both;
+            background-color: gray;
+        }
     </style>
     <title>Document</title>
 </head>
@@ -21,10 +55,10 @@
             <div class="col-3 p-0 my-col">
 
                 <!--
+                    Touch ups:
                     1.) Make sidebar card a bluish color with white text
                     2.) Translucent badge counters
                     3.) Make search bar translucent
-                    4.) Start on text area and remember to float
                 -->
 
                 <!--Sidebar card-->
@@ -37,14 +71,15 @@
                             <input type="search" class="form-control" placeholder="Type to search..."/>
                         </div>
                     </div>
-                    <div class="card-body p-0">
+                    <div class="card-body overflow-scroll p-0" style="height: 1px;">
                         <div class="list-group list-group-flush">
+                            <!--Online users go here-->
                             <button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
                                 <span>
                                     <i class="fas fa-user-circle me-2"></i>
-                                    <span>Josh Bender</span>
+                                    <span>Ben Bender</span>
                                 </span>
-                                <span class="badge bg-primary rounded-pill">14</span>
+                                <span class="badge bg-primary rounded-pill">2</span>
                             </button>
                             <button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
                                 <span>
@@ -55,6 +90,8 @@
                             </button>
                         </div>
                     </div>
+                    <div class="card-footer">
+                    </div>
                 </div>
 
             </div>
@@ -63,13 +100,18 @@
                 <!--Chat card-->
                 <div class="card h-100 rounded-0">
                     <div class="card-header">
-                        <p class="fs-6 p-0 m-0">To: ...</p>
+                        <!--User name goes here-->
+                        <p class="fs-4 p-0 m-0">To: <span>Jacob Bender</span></p>
                     </div>
-                    <div class="card-body">
-                        ...
+                    <div class="card-body overflow-auto" style="height: 1px;">
+                        <!--Messages go here-->
+                        <p class="chat-bubble sent text-wrap">Hello, my name is Josh</p>
+                        <div class="separator"></div>
+                        <p class="chat-bubble received text-wrap">Hi Josh! It's nice to meet you. What's new??</p>
+                        <div class="separator"></div>
                     </div>
                     <div class="card-footer">
-                        <textarea class="form-control" placeholder="Message..." rows="2"></textarea>
+                        <input type="text" class="form-control" placeholder="Message...">
                     </div>
                 </div>
 
@@ -78,5 +120,23 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    <script>
+
+        /*
+        * 0. For development- define a set of online users
+        *
+        * 1. Cache the DOM
+        *
+        * 2. Attach event handlers to specific, well-defined HTML elements
+        *
+        *   - "type to search input" element
+        *   - "online user sidebar button" element*
+        *   - "message input" element (ajax)
+        *   - poll the database for unseen messages (ajax)
+        *       - if user is not in focus on new message: notification badge will be incremented
+        *       - if user is in focus on new message    : user will see live update of new message  
+        */
+        
+    </script>
 </body>
 </html>
