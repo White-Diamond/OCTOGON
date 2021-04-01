@@ -16,7 +16,7 @@ body {
 	margin: -20px 0 50px;
 }
 
-h1 {
+h1,.recvTitle {
 	font-weight: bold;
 	margin: 0;
 }
@@ -116,6 +116,11 @@ input {
 	min-height: 480px;
 }
 
+#container{
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .form-container {
 	position: absolute;
 	top: 0;
@@ -124,11 +129,23 @@ input {
 }
 
 .sign-in-container {
-
 	left: 0;
 	width: 50%;
 	z-index: 2;
 }
+
+/* Account Recover Page */
+.recvTitle,.recvIcon{
+  position: relative;
+  margin: 3%;
+  bottom: 2%;
+}
+
+.recvButton{
+  position: relative;
+  top: 3%;
+}
+/* Account Recover Page */
 
 .container.right-panel-active .sign-in-container {
 	transform: translateX(100%);

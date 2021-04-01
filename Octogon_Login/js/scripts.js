@@ -10,6 +10,17 @@ form.addEventListener('submit', e => {
 	  checkInputsSignUp();
 });
 
+function checkInputsPswrdRecv(){
+  const emailValue = email.value.trim();
+
+  if(emailValue === '') {
+		setErrorFor(email);
+	} else {
+		setSuccessFor(email);
+	}
+
+}
+
 function checkInputsSignIn(){
   const emailValue = email.value.trim();
 	const passwordValue = password.value.trim();
