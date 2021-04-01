@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+# temporary model for testing display of threads
 class tempThreadModel (models.Model):
-    threadID = models,IntegerField()
+    threadID = models.IntegerField()
     main_text = models.TextField()
