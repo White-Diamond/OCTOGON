@@ -98,7 +98,7 @@
                         <!--Messages go here-->
                     </div>
                     <div class="card-footer">
-                        <div class="form-control message-box" contenteditable="true" placeholder="Message..."></div>
+                        <div id="text-submit" class="form-control message-box" contenteditable="true" placeholder="Message..."></div>
                     </div>
                 </div>
 
@@ -107,16 +107,29 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+
+    {% csrf_token %}
     <script>
-        // define users
-        const users = [
+        // constants and lists
+        const csrftoken = Cookies.get('csrftoken');
+        let recipient = {};
+        let messageList = [];
+        let userList = [
             {
+                chatID: 1,
                 fullName: "Josh Bender",
                 username: "joshua.caleb.bender@gmail.com"
             },
             {
+                chatID: 2,
                 fullName: "Jacob Bender",
                 username: "jbender321@gmail.com"
+            },
+            {
+                chatID:3,
+                fullName: "Ben Bender",
+                username: "ben.b@gmail.com"
             }
         ];
 
@@ -124,48 +137,101 @@
         let userArea_div = document.getElementById("user-area");
         let recipientArea_div = document.getElementById("recipient-area");
         let messageArea_div = document.getElementById("message-area");
+        let textSubmitArea_div = document.getElementById("text-submit");
 
-        // HTML templatess
-        let to = "";
-        let user = "";
-        let message = "";
-        let count = 0;
+        // Dynamic HTML templatess
+        let createUserElem = function(user, count){
+            return `<button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
+                        <span>
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span>${user.fullName}</span>
+                        </span>
+                        <span class="badge bg-primary rounded-pill">${count}</span>
+                    </button>`;
+        }
+        let createToElem = function(to){
+            return `<p class="fs-4 p-0 m-0">To: <span id="recipient-area">${to}</span></p>`
+        }
+        let createSentMessageElem = function(message){
+            return `<p class="chat-bubble received text-wrap">${message}</p>
+                    <div class="separator"></div>`;
+        }
+        let createReceivedMessageElem = function(message){
+            return `<p class="chat-bubble sent text-wrap">${message}</p>
+                    <div class="separator"></div>`;
+        } 
 
-        let userElem = `<button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
-                            <span>
-                                <i class="fas fa-user-circle me-2"></i>
-                                <span>${user}</span>
-                            </span>
-                            <span class="badge bg-primary rounded-pill">${count}</span>
-                        </button>`;
-        let toElem = `<p class="fs-4 p-0 m-0">To: <span id="recipient-area">${to}</span></p>`
-        let messageElem = `<p class="chat-bubble received text-wrap">${message}</p>
-                           <div class="separator"></div>`;
-        
+        function updateUserAreaDiv(){
+            // create all HTML first
+            for(let i = 0; i < userList.length; i++){
+                let user = userList[i];
+                let elem = createUserElem(user, 0)
+                userArea_div.innerHTML += elem;
+            }
+
+            // assign event listeners to each user button
+            let buttons = userArea_div.children;
+            for(let i = 0; i < buttons.length; i++){
+                let button = buttons[i];
+                button.addEventListener('click', updateRecipientAreaDiv.bind(this, userList[i]), false);
+            }
+        }
+
+        function updateRecipientAreaDiv(user){
+            let elem = createToElem(user.fullName);
+            recipientArea_div.innerHTML = elem;
+
+            // set current user
+            recipient = user;
+        }
+
+        async function send(message, recipient){
+            // udpate DOM
+            messageArea_div.innerHTML += createSentMessageElem(message);
+
+            // udpate DB 
+            // MAKE USER LIST A CONVERSATION LIST AND SEND ENTIRE CHAT WITH DATA AND MESSAGE IN IT TO SERVER
+            // MAKE THIS WORK WITH JUST ONE USER TO USER FOR NOW
+            const request = {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest', 
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    message: message,
+                    recipient: recipient
+                })
+            };
+
+            const response = await fetch('load/', request);
+        }
+
+        async function poll(){
+            // update DOM
+            // update DB
+        }
+
         // attach event handlers
         function main(){
-            userArea_div.innerHTML = userElem; // make this into a function where I can loop through all online users and pass them to it
-            console.log(recipientArea_div);
-            console.log(userArea_div);
-            console.log(messageArea_div);
+            // load default page contents
+            updateUserAreaDiv();
+
+            // event handler for submit button
+            textSubmitArea_div.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter'){
+                    e.preventDefault();
+                    let message = e.target.innerHTML;
+                    send(message, recipient);
+                    e.target.innerHTML = '';
+                }
+            });
         }
 
         main();
     
-        /*
-        - "type to search input" element
-        - "online user sidebar button" element*
-        - "message input" element (ajax)
-        - poll the database for unseen messages (ajax)
-            - if user is not in focus on new message: notification badge will be incremented
-            - if user is in focus on new message    : user will see live update of new message  
-        */
-
-        /*
-        - bi-directional chat
-        - chat is removed when users leave session
-        */
-        
     </script>
 </body>
 </html>

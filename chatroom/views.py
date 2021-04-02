@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.http import HttpResponse
 
 # Create your views here.
 def chat_page(request):
@@ -9,4 +10,6 @@ def retrieve_json(request):
     return JsonResponse({'foo':'retrieve_json'})
 
 def load_json(request):
-    return JsonResponse({'foo':'load_json'})
+    # save messages in request.body
+    print(request.body)
+    return HttpResponse("OK")
