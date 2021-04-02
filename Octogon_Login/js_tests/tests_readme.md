@@ -1,10 +1,10 @@
 # Login Tests Readme
 
 ## Version:<br>
-  -This code was published in iteration 2<br>
+  - This code was published in iteration 2<br>
 
 ## Dependencies:<br>
-  -The testing functions currently utilize Mocha and Chai to test out the js code
+  - The testing functions currently utilize Mocha and Chai to test out the js code
   -The testing functions can be found at “js_tests/test_scripts.js”
   -These testing scripts may change in the future once I utilize Django in my HTML files in future iterations
   -You do not need to install any dependencies to run the software
