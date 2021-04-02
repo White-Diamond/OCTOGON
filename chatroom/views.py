@@ -8,6 +8,7 @@ import json
 def chat_page(request):
     return render(request, "index.html")
 
+
 def retrieve_json(request):
     # save messages in request.body
     data = json.loads(request.body)
