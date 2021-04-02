@@ -1,9 +1,10 @@
 .baseframe {
     display: grid;
-    grid-template-columns: 50% 50%;
-    grid-column-gap: 20px;
+    grid-template-columns: 30% 70%;
+    /*grid-column-gap: 20px;*/
     width: 100%;
-    height: 100%;
+    min-height: 200px;
+    height: calc(100vh - 100px);
 
     font-family: PT Sans;
 
@@ -11,6 +12,7 @@
 }
 
 .select_thread_frame {
+    border: 2px solid #000000;
     /*position: absolute;*/
     grid-template-rows: 100px;
     width: 100%;
@@ -22,6 +24,8 @@
 }
 
 .display_thread_frame {
+    border: 2px solid #000000;
+    overflow:auto;
     /*position: absolute;*/
     width: 100%;
     height: 100%;
@@ -34,7 +38,9 @@
     grid-template-rows: max-content;
     /*position: absolute;*/
     width: 100%;
-    /*height: 100px;*/
+    height: 100px;
+
+    text-align: center;
 
     background: #FFD3D3;
     border: 1px solid #000000;
@@ -42,13 +48,20 @@
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.board_title {
-    position: absolute;
-    width: 710px;
-    height: 62px;
-    left: 0px;
-    top: 0px;
+.post_box {
+    grid-template-rows: max-content;
+    width: 100%;
+    height: 100px;
 
+    text-align: center;
+
+    background: #FFE3E3;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.board_title {
     font-family: PT Sans;
     font-style: normal;
     font-weight: bold;

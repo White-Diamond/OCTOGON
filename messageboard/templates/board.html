@@ -4,18 +4,30 @@
 <head>
 <link rel="stylesheet" href="{% static 'css/messageBoard.css' %}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="height=device-height, initial-scale=1.0">
 </head>
 <body>
-    <h1>Class Name</h1>
+    <h1 class="board_title">OCTOGON</h1>
     <div class="baseframe">
 
         <div class="select_thread_frame">
-            <p>
-                resources
-            </p>
-            {% for thread in threadList %}
             <div class="thread_selection_box">
-
+                Thread #1
+            </div>
+            <div class="thread_selection_box">
+                Thread #2
+            </div>
+            <div class="thread_selection_box">
+                Thread #3
+            </div>
+            <div class="thread_selection_box">
+                Thread #4
+            </div>
+            {% for thread in threadList %}
+            <div class="thread_selection_box" onclick="changeThread(this, {{thread.threadID}})">
+                I am thread number {{thread.thread_ID}}
+                This is my topic:
+                {{thread.threadTopic}}
             </div>
             {% endfor %}
         </div>
@@ -23,6 +35,13 @@
             <p>
                 This is the display thread frame
             </p>
+            {% for post in posts %}
+            <div class="post_box">
+                I am post number {{post.post_ID}}
+                This is my text:
+                {{post.main_text}}
+            </div>
+            {% endfor %}
         </div>
 
     </div>
@@ -30,7 +49,11 @@
     {% block javascript %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-    </script>
+    function changeThread(threadBox, ID){
+        location.href("{{site.domain}}thread/{{thread.thread_ID}}");
+    }
+    </script>>
+
     {% endblock javascript %}
 
 </body>

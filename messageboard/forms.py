@@ -4,6 +4,5 @@ from django import forms
 # messageboard
 class createThreadForm (forms.Form):
     threadTopic = forms.CharField()
-    messageContents = forms.TextInput()
-    userID = forms.IntegerField()
-
+    post_text = forms.TextInput()
+    
