@@ -226,6 +226,7 @@
                     let message = e.target.innerHTML;
                     send(message, recipient);
                     e.target.innerHTML = '';
+                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
                 }
             });
         }
