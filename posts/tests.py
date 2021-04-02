@@ -3,6 +3,7 @@ from posts.models import Thread, Post, Message
 from django.utils import timezone
 import datetime
 
+#Test for merge conflicts
 
 class PostsTestCase(TestCase):
     def setUp(self):
