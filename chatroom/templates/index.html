@@ -114,20 +114,16 @@
         // constants and lists
         const csrftoken = Cookies.get('csrftoken');
         let recipient = {};
-        let messageList = [];
+        const sender = {
+            fullName: "Josh Bender",
+            username: "joshua.caleb.bender@gmail.com" // this is just the uuid of the current user
+        }
         let userList = [
             {
-                chatID: 1,
-                fullName: "Josh Bender",
-                username: "joshua.caleb.bender@gmail.com"
-            },
-            {
-                chatID: 2,
                 fullName: "Jacob Bender",
                 username: "jbender321@gmail.com"
             },
             {
-                chatID:3,
                 fullName: "Ben Bender",
                 username: "ben.b@gmail.com"
             }
@@ -175,13 +171,15 @@
                 let button = buttons[i];
                 button.addEventListener('click', updateRecipientAreaDiv.bind(this, userList[i]), false);
             }
+
+            updateRecipientAreaDiv(userList[0]);
         }
 
         function updateRecipientAreaDiv(user){
             let elem = createToElem(user.fullName);
             recipientArea_div.innerHTML = elem;
 
-            // set current user
+            // set current recipient
             recipient = user;
         }
 
@@ -189,9 +187,7 @@
             // udpate DOM
             messageArea_div.innerHTML += createSentMessageElem(message);
 
-            // udpate DB 
-            // MAKE USER LIST A CONVERSATION LIST AND SEND ENTIRE CHAT WITH DATA AND MESSAGE IN IT TO SERVER
-            // MAKE THIS WORK WITH JUST ONE USER TO USER FOR NOW
+            // POST- update db
             const request = {
                 method: 'POST',
                 credentials: 'same-origin',
@@ -202,7 +198,8 @@
                 },
                 body: JSON.stringify({
                     message: message,
-                    recipient: recipient
+                    recipient: recipient,
+                    sender: sender
                 })
             };
 
@@ -210,8 +207,32 @@
         }
 
         async function poll(){
+            // POST- retrieve from db
+            const request = {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest', 
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    sender: sender,
+                    recipient: recipient
+                })
+            };
+
+            const response = await fetch('retrieve/', request);
+            const jsonArray = await response.json();
+
             // update DOM
-            // update DB
+            for(let i = 0; i < jsonArray.length; i++){
+                let message = jsonArray[i]['message'];
+                messageArea_div.innerHTML += createReceivedMessageElem(message);
+            }
+
+            // poll for new unseen messages
+            setTimeout(poll, 1000);
         }
 
         // attach event handlers
@@ -229,8 +250,12 @@
                     messageArea_div.scrollTop = messageArea_div.scrollHeight;
                 }
             });
+
+            // poll for incoming messagess
+            poll(sender, recipient);
         }
 
+        // run app
         main();
     
     </script>
