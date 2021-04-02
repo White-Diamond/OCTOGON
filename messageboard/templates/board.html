@@ -8,8 +8,11 @@
 </head>
 <body>
     <h1 class="board_title">OCTOGON</h1>
-    <div class="baseframe">
 
+    <!-- Frame which contains all thread and post related content -->
+    <div class="baseframe">
+        
+        <!-- Left side of webpage with a list of threads in boxes -->
         <div class="select_thread_frame">
             <div class="thread_selection_box">
                 Thread #1
@@ -23,6 +26,9 @@
             <div class="thread_selection_box">
                 Thread #4
             </div>
+
+            <!-- Loop through the list of all threads in messageboard and display them on
+            the left side of the screen each within their own box -->
             {% for thread in threadList %}
             <div class="thread_selection_box" onclick="changeThread(this, {{thread.threadID}})">
                 I am thread number {{thread.thread_ID}}
@@ -31,10 +37,14 @@
             </div>
             {% endfor %}
         </div>
+
+        <!-- Right side of webpage with the list of posts for the selected thread -->
         <div class="display_thread_frame">
             <p>
                 This is the display thread frame
             </p>
+            <!-- Loop through the list of all posts in thread and display them on
+            the right side of the screen each within their own box -->
             {% for post in posts %}
             <div class="post_box">
                 I am post number {{post.post_ID}}
@@ -46,6 +56,8 @@
 
     </div>
 
+    <!-- Script for retreiving the posts for a specific thread when the thread selection
+    box is clicked. Causes a webpage request -->
     {% block javascript %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
@@ -53,7 +65,6 @@
         location.href("{{site.domain}}thread/{{thread.thread_ID}}");
     }
     </script>>
-
     {% endblock javascript %}
 
 </body>
