@@ -3,9 +3,11 @@ from django.http import JsonResponse
 
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from messageboard.models import tempThreadModel
+from django.contrib.sites.models import Site
 # Import "from post.models" all the models from the threads and posts
 # in Ryan's message & post database branch
+from posts.models import Thread
+from posts.models import Post
 from .forms import createThreadForm
 
 
@@ -18,7 +20,7 @@ def basicResponse (request):
 def mainBoard (request):
     # Get all threads
     context = {}
-    context['threadList'] = tempThreadModel.objects.all()
+    context['threadList'] = Thread.objects.all()
     context['posts'] = {}
     return render(request, "board.html", context)
 
@@ -28,8 +30,15 @@ def getThreadPosts (request, thrdID):
 
     # Get all posts in the selected thread and list of all threads
     context = {}
-    context['threadList'] = tempThreadModel.objects.all() # 
-    context['posts'] = models.tempPosts.objects.all(threadID=thrdID) # post.thread.all(thread)
+    context['threadList'] = Thread.objects.all() #
+    try:
+        th = Thread.objects.get(thread_ID=thrdID)
+    except:
+        redirectPage = Site.objects.get_current().domain + "messageboard/"
+        return HttpResponseRedirect(redirectPage)
+    postList = Post.objects.all()
+    postList.Thread.filter(thread_ID=thrdID) 
+    context['posts'] = Post.Thread.get(threadID=thrdID) # post.thread.all(thread)
     return (request, 'board.html', context)
 
 
@@ -56,14 +65,14 @@ def userMakesThread (request):
             
             # Save the newly created thread and post in the database
             thread_entry.save()
-            post_entry()
+            post_entry.save()
             
             # Create a context for returning to the messageboard with the new thread
             context = {}
             context['posts'] = post_entry
-            context['threadList'] = tempThreadModel.objects.all()
+            context['threadList'] = Thread.objects.all()
 
             return (request, 'board.html', context)
-    # Get request used
+    # Get request used and rejected
     else:
         pass

@@ -38,9 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'posts',
-    'dajaxice',
-    'dajax',
     'messageboard',
+    'django.contrib.sites'
 ]
 
 MIDDLEWARE = [

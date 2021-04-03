@@ -1,0 +1,24 @@
+## Description
+This app is the implementation of a messageboard for the webapp where a majority of communication will take place.
+
+4/2/2021: As of right now, the app is not finished. There still needs to be more development on this app. Further works
+includes:
+- Page updates when clicking on specific threads to get that thread's posts
+- Handling exceptions to user input when threads are created
+- Getting posts
+- 
+
+## Testing
+Testing tests the ability to retreive data and make sure Posts can easily be associated with a certain thread and vise vera.
+
+
+#### Requirements: 
+- python 3
+- packages included in OCTOGON/requirments.txt
+
+If you don't have python3 installed, then please install it, create a virtual environment,
+and install all dependencies in the requirements.txt mentioned above.
+
+To run the tests in this folder use the command: python manage.py test
+
+This will run all tests across the project including the ones for this app.

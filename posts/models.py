@@ -12,6 +12,7 @@ class Thread(models.Model):
 
 class Post(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE) #this should by default add post_set to Thread
+    owning_thread_ID = models.IntegerField(default=0)
     post_ID = models.IntegerField(default=0)
     user_ID = models.IntegerField(default=0)
     post_date = models.DateTimeField(auto_now_add=True)

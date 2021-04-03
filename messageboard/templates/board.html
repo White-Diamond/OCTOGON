@@ -9,12 +9,16 @@
 <body>
     <h1 class="board_title">OCTOGON</h1>
 
+    <div class="make_thread_btn">
+        New Thread
+    </div>
+
     <!-- Frame which contains all thread and post related content -->
     <div class="baseframe">
         
         <!-- Left side of webpage with a list of threads in boxes -->
         <div class="select_thread_frame">
-            <div class="thread_selection_box">
+            <div class="thread_selection_box" onclick="changeThread(this, 1)">
                 Thread #1
             </div>
             <div class="thread_selection_box">
@@ -29,7 +33,7 @@
 
             <!-- Loop through the list of all threads in messageboard and display them on
             the left side of the screen each within their own box -->
-            {% for thread in threadList %}
+            {% for thread in context.threadList %}
             <div class="thread_selection_box" onclick="changeThread(this, {{thread.threadID}})">
                 I am thread number {{thread.thread_ID}}
                 This is my topic:
@@ -45,7 +49,7 @@
             </p>
             <!-- Loop through the list of all posts in thread and display them on
             the right side of the screen each within their own box -->
-            {% for post in posts %}
+            {% for post in context.posts %}
             <div class="post_box">
                 I am post number {{post.post_ID}}
                 This is my text:
