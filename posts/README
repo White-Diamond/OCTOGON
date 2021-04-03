@@ -1,2 +1,0 @@
-To run the tests for posts/models.py navigate to the OCTAGON directory and enter the command:
-python manage.py test
