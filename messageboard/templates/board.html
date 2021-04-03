@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    {%load static %}
+<head>
+<link rel="stylesheet" href="{% static 'css/messageBoard.css' %}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="height=device-height, initial-scale=1.0">
+</head>
+<body>
+    <h1 class="board_title">OCTOGON</h1>
+
+    <div class="make_thread_btn">
+        New Thread
+    </div>
+
+    <!-- Frame which contains all thread and post related content -->
+    <div class="baseframe">
+        
+        <!-- Left side of webpage with a list of threads in boxes -->
+        <div class="select_thread_frame">
+            <div class="thread_selection_box" onclick="changeThread(this, 1)">
+                Thread #1
+            </div>
+            <div class="thread_selection_box">
+                Thread #2
+            </div>
+            <div class="thread_selection_box">
+                Thread #3
+            </div>
+            <div class="thread_selection_box">
+                Thread #4
+            </div>
+
+            <!-- Loop through the list of all threads in messageboard and display them on
+            the left side of the screen each within their own box -->
+            {% for thread in context.threadList %}
+            <div class="thread_selection_box" onclick="changeThread(this, {{thread.threadID}})">
+                I am thread number {{thread.thread_ID}}
+                This is my topic:
+                {{thread.threadTopic}}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Right side of webpage with the list of posts for the selected thread -->
+        <div class="display_thread_frame">
+            <p>
+                This is the display thread frame
+            </p>
+            <!-- Loop through the list of all posts in thread and display them on
+            the right side of the screen each within their own box -->
+            {% for post in context.posts %}
+            <div class="post_box">
+                I am post number {{post.post_ID}}
+                This is my text:
+                {{post.main_text}}
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <!-- Script for retreiving the posts for a specific thread when the thread selection
+    box is clicked. Causes a webpage request -->
+    {% block javascript %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    function changeThread(threadBox, ID){
+        location.href("{{site.domain}}thread/{{thread.thread_ID}}");
+    }
+    </script>>
+    {% endblock javascript %}
+
+</body>
+</html>
