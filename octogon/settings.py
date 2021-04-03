@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'user_profile_db.apps.UserProfileDbConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'posts',
     'messageboard',
     'django.contrib.sites'
+    'userpage',
 ]
 
 MIDDLEWARE = [
