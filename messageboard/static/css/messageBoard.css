@@ -71,3 +71,11 @@
 
     color: #000000;
 }
+
+.make_thread_btn {
+    background-color: #FF8080;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 20px;
+}
