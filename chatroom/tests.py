@@ -43,23 +43,52 @@ class MessageTestCase(TestCase):
 class MessageAPITestCase(TestCase):
     def setUp(self):
         # setup all necessary models for tests
-        print("Setting up...")
+        Chat.objects.create(to_id="joshua.caleb.bender@gmail.com", from_id="jbender321@gmail.com")
+        Chat.objects.create(to_id="jbender321@gmail.com", from_id="joshua.caleb.bender@gmail.com")
 
     def test_retrieve_json(self):
         # create JSON data
         python_dict = {
-            "1": {
-                "guid": "8a40135230f21bdb0130f21c255c0007",
-                "portalId": 999,
-                "email": "fake@email"
+            "sender": {
+                "fullName": "Josh Bender", 
+                "username": "joshua.caleb.bender@gmail.com"
+            }, 
+            "recipient": {
+                "fullName": "Jacob Bender", 
+                "username": "jbender321@gmail.com"
             }
         }
-        # CREATE CORRECT JSON DATA ABOVE
+
+        # POST
         data = self.client.post('/chatroom/retrieve/', json.dumps(python_dict), content_type="application/json")
-        print(data.status_code)
-        self.assertEqual(data,data)
-        # validate JSON was put into database
+
+        # validate JSON response was OK
+        successHTTP = 200
+        self.assertEqual(data.status_code, successHTTP)
 
     def test_load_json(self):
-        self.assertEqual(1,1)
-        # validate JSON was put into database
+        # create JSON data
+        python_dict = {
+                "message": "json",
+                "recipient": {
+                    "fullName": "Jacob Bender",
+                    "username": "jbender321@gmail.com"
+                },
+                "sender": {
+                    "fullName": "Josh Bender",
+                    "username": "joshua.caleb.bender@gmail.com"
+                }
+        }
+
+        # POST
+        data = self.client.post('/chatroom/load/', json.dumps(python_dict), content_type="application/json")
+
+        # validate JSON response was OK
+        successHTTP = 200
+        self.assertEqual(data.status_code, successHTTP)
+
+        # validate message JSON was sent to db
+        message = Message.objects.get(message="json")
+        self.assertEqual(message.message, "json")
+
+
