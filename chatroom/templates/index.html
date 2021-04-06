@@ -157,8 +157,33 @@
                     <div class="separator"></div>`;
         } 
 
+        function initSender(){
+
+             /*
+             * Right now this is just dummy data but in the future
+             * This information should be retrieved from local or session storage
+             */
+
+            let sender = prompt("Enter your email: ");
+            console.log(sender);
+        }
+
+        function initUserList(){
+
+             /*
+             * Right now this is just dummy data but in the future
+             * This information should be retrieved from local or session storage
+             */
+
+            let recipientList = [];
+            for(let i = 0; i < 3; i++){
+                let recipient = prompt("Enter a recipient email: ");
+                recipientList.push(recipient);
+            }
+        }
+
         function updateUserAreaDiv(){
-            // create all HTML first
+            // create HTML user list
             for(let i = 0; i < userList.length; i++){
                 let user = userList[i];
                 let elem = createUserElem(user, 0)
@@ -171,8 +196,6 @@
                 let button = buttons[i];
                 button.addEventListener('click', updateRecipientAreaDiv.bind(this, userList[i]), false);
             }
-
-            updateRecipientAreaDiv(userList[0]);
         }
 
         function updateRecipientAreaDiv(user){
@@ -237,8 +260,13 @@
 
         // attach event handlers
         function main(){
+            // initialize users
+            initSender();
+            initUserList();
+
             // load default page contents
             updateUserAreaDiv();
+            updateRecipientAreaDiv(userList[0]);
 
             // event handler for submit button
             textSubmitArea_div.addEventListener('keypress', (e) => {
@@ -251,13 +279,13 @@
                 }
             });
 
-            // poll for incoming messagess
+            // poll for incoming messages
             poll(sender, recipient);
         }
 
         // run app
         main();
-    
     </script>
+
 </body>
 </html>
