@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'chatroom',
     'posts',
     'messageboard',
-    'django.contrib.sites'
+    'django.contrib.sites',
     'userpage',
 ]
 
