@@ -67,7 +67,7 @@
                             <span class="input-group-text bg-white border" id="inputGroup-sizing-sm">
                                 <i class="fas fa-search"></i>
                             </span>
-                            <input type="search" class="form-control" placeholder="Type to search..."/>
+                            <input type="search" class="form-control" placeholder="Type to search..." id="search-bar"/>
                         </div>
                     </div>
                     <div class="card-body overflow-scroll p-0" style="height: 1px;">
@@ -123,8 +123,10 @@
         </div>
     </div>
 
+    <!-- content -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
 
     {% csrf_token %}
     <script>
@@ -138,6 +140,7 @@
         let textSubmitArea_div = document.getElementById("text-submit");
         let modalClassmateArea_div = document.getElementById("modal-classmate-area");
         let modal_btn = document.getElementById("modal-button");
+        let searchBar_input = document.getElementById("search-bar");
 
         // Dynamic HTML templatess
         let createUserElem = function(user, count){
@@ -198,12 +201,24 @@
                     email: "ben.bender@gmail.com"
                 },
                 {
-                    fullName: "Mark Bender",
-                    email: "mark.bender@gmail.com"
+                    fullName: "Mark Smith",
+                    email: "mark.smith@gmail.com"
                 },
                 {
-                    fullName: "Dave Bender",
-                    email: "dave.bender@gmail.com"
+                    fullName: "Donny LaLa",
+                    email: "donny.lala@gmail.com"
+                },
+                {
+                    fullName: "Bill Bob",
+                    email: "bill.bob@gmail.com"
+                },
+                {
+                    fullName: "Joe Mamma",
+                    email: "joe.mamma@gmail.com"
+                },
+                {
+                    fullName: "Gage Rims",
+                    email: "gage.rims@gmail.com"
                 }
             ];
 
@@ -301,7 +316,6 @@
                 // retrieve all unseen messages sent from other user to active user
                 const response = await fetch('retrieve/', request);
                 const jsonArray = await response.json();
-                console.log(jsonArray);
 
                 // update DOM
                 for(let i = 0; i < jsonArray.length; i++){
@@ -318,6 +332,41 @@
             let classmates = getClassmates();
             let otherUsers = [];
             let otherUser = {};
+
+            // asign event to search bar for fuzzy searching
+            searchBar_input.addEventListener('input', (e)=>{
+                e.preventDefault();
+                let searchVal = e.target.value;
+
+                /*
+                * Below we are using Fuse.js fuzzy search algorithm in order
+                * to properly implement the search functionality the result of 
+                * the search algorithm is an array of values that match the give 
+                * search value in order of closest match
+                */
+
+                const options = {
+                    includeScore: true,
+                    keys: ['fullName']
+                };
+                const fuse = new Fuse(otherUsers, options);
+                const result = fuse.search(searchVal);
+
+                if(searchVal !== ''){
+                    // show filtered search
+                    userArea_div.innerHTML = '';
+                    result.forEach( (user) => {
+                        updateUserAreaDiv(user.item);
+                    });
+                } else{
+                    // revert back to normal user list
+                    userArea_div.innerHTML = '';
+                    otherUsers.forEach( (user) => {
+                        updateUserAreaDiv(user);
+                    });
+                }
+
+            }, false);
 
             // assign event to user button to update list of classmates on modal
             modal_btn.addEventListener('click', (e) => {
