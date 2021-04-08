@@ -8,12 +8,25 @@ import json
 def chat_page(request):
     return render(request, "index.html")
 
+def create_new_chat(request):
+    # request data
+    data = json.loads(request.body)
+    to_id = data['to']['email']
+    from_id = data['from']['email']
+    
+    # new chat
+    newChat = Chat()
+    newChat.to_id = to_id
+    newChat.from_id = from_id
+    newChat.save()
 
-def retrieve_json(request):
+    return HttpResponse("OK") 
+
+def retrieve_message(request):
     # save messages in request.body
     data = json.loads(request.body)
-    recipient_id = data['recipient']['username']
-    sender_id = data['sender']['username']
+    recipient_id = data['recipient']['email']
+    sender_id = data['sender']['email']
 
     # find chatroom ID in Chat model
     chatID = Chat.objects.get(to_id=sender_id, from_id=recipient_id)
@@ -32,7 +45,7 @@ def retrieve_json(request):
 
     return HttpResponse(jsonMessages)
 
-def load_json(request):
+def load_message(request):
     # save messages in request.body
     data = json.loads(request.body)
     message = data['message']

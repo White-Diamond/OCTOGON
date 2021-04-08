@@ -11,15 +11,6 @@
             height: 100%;
             width: 100%;
         }
-        .my-container{
-            border: 3px solid green;
-        }
-        .my-row{
-            border: 3px solid red;
-        }
-        .my-col{
-            border: 3px solid blue;
-        }
         .card-header{
             height: 50px;
         }
@@ -81,7 +72,33 @@
                     </div>
                     <div class="card-body overflow-scroll p-0" style="height: 1px;">
                         <div class="list-group list-group-flush" id="user-area">
-                            <!--Online users go here-->
+                            <!--Users go here-->
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <!-- Button toggle for modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal" id="modal-button">
+                            <i class="fas fa-user-plus"></i>
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="addUserModal" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Select a classmate to chat with</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="list-group" id="modal-classmate-area">
+                                            <!--Classmate names go here-->
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -92,7 +109,7 @@
                 <!--Chat card-->
                 <div class="card h-100 rounded-0">
                     <div class="card-header" id="recipient-area">
-                        <!--User name goes here-->
+                        <!--Recipient name goes here-->
                     </div>
                     <div class="card-body overflow-auto" style="height: 1px;" id="message-area">
                         <!--Messages go here-->
@@ -113,32 +130,19 @@
     <script>
         // constants and lists
         const csrftoken = Cookies.get('csrftoken');
-        let recipient = {};
-        const sender = {
-            fullName: "Josh Bender",
-            username: "joshua.caleb.bender@gmail.com" // this is just the uuid of the current user
-        }
-        let userList = [
-            {
-                fullName: "Jacob Bender",
-                username: "jbender321@gmail.com"
-            },
-            {
-                fullName: "Ben Bender",
-                username: "ben.b@gmail.com"
-            }
-        ];
 
         // cache DOM elements
         let userArea_div = document.getElementById("user-area");
         let recipientArea_div = document.getElementById("recipient-area");
         let messageArea_div = document.getElementById("message-area");
         let textSubmitArea_div = document.getElementById("text-submit");
+        let modalClassmateArea_div = document.getElementById("modal-classmate-area");
+        let modal_btn = document.getElementById("modal-button");
 
         // Dynamic HTML templatess
         let createUserElem = function(user, count){
             return `<button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
-                        <span>
+                        <span class="text-truncate">
                             <i class="fas fa-user-circle me-2"></i>
                             <span>${user.fullName}</span>
                         </span>
@@ -156,34 +160,98 @@
             return `<p class="chat-bubble sent text-wrap">${message}</p>
                     <div class="separator"></div>`;
         } 
+        let createModalClassmateElem = function(classmate){
+            return `<button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="modal">${classmate.fullName}</button>`;
+        } 
 
-        function updateUserAreaDiv(){
-            // create all HTML first
-            for(let i = 0; i < userList.length; i++){
-                let user = userList[i];
-                let elem = createUserElem(user, 0)
-                userArea_div.innerHTML += elem;
-            }
+        function getActiveUser(){
 
-            // assign event listeners to each user button
-            let buttons = userArea_div.children;
-            for(let i = 0; i < buttons.length; i++){
-                let button = buttons[i];
-                button.addEventListener('click', updateRecipientAreaDiv.bind(this, userList[i]), false);
-            }
+             /*
+             * Right now this is just dummy data but in the future
+             * this information should be retrieved from local or session storage
+             */
 
-            updateRecipientAreaDiv(userList[0]);
+            let name = prompt("Enter your name: ");
+            let email = prompt("Enter your email: ");
+            let obj = {
+                fullName: name,
+                email: email
+            };
+
+            return obj;
         }
 
-        function updateRecipientAreaDiv(user){
-            let elem = createToElem(user.fullName);
+        function getClassmates(){
+
+             /*
+             * Right now this is just dummy data but in the future
+             * this information should be retrieved from the backend database
+             */
+             
+            let classmates = [
+                {
+                    fullName: "Jacob Bender",
+                    email: "jacob.bender@gmail.com"
+                },
+                {
+                    fullName: "Ben Bender",
+                    email: "ben.bender@gmail.com"
+                },
+                {
+                    fullName: "Mark Bender",
+                    email: "mark.bender@gmail.com"
+                },
+                {
+                    fullName: "Dave Bender",
+                    email: "dave.bender@gmail.com"
+                }
+            ];
+
+            return classmates;
+        }
+
+        function updateModalClassmateDiv(classmates){
+            modalClassmateArea_div.innerHTML = '';
+            // create HTML user list
+            for(let i = 0; i < classmates.length; i++){
+                let classmate = classmates[i];
+                let elem = createModalClassmateElem(classmate, 0)
+                modalClassmateArea_div.innerHTML += elem;
+            }
+        }
+
+        function updateUserAreaDiv(otherUser){
+            // create HTML user button
+            let elem = createUserElem(otherUser, 0)
+            userArea_div.innerHTML += elem;
+        }
+
+        function updateRecipientAreaDiv(recipient){
+            // create HTML recipient element
+            let elem = createToElem(recipient.fullName);
             recipientArea_div.innerHTML = elem;
-
-            // set current recipient
-            recipient = user;
         }
 
-        async function send(message, recipient){
+        async function createNewChat(to, from){
+            // POST- update db
+            const request = {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest', 
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    from: from,
+                    to: to
+                })
+            };
+
+            const response = await fetch('create/', request);
+        }
+
+        async function send(message, activeUser, otherUser){
             // udpate DOM
             messageArea_div.innerHTML += createSentMessageElem(message);
 
@@ -198,15 +266,15 @@
                 },
                 body: JSON.stringify({
                     message: message,
-                    recipient: recipient,
-                    sender: sender
+                    from: activeUser,
+                    to: otherUser
                 })
             };
 
             const response = await fetch('load/', request);
         }
 
-        async function poll(){
+        async function poll(sender, currentRecipient){
             // POST- retrieve from db
             const request = {
                 method: 'POST',
@@ -237,27 +305,91 @@
 
         // attach event handlers
         function main(){
-            // load default page contents
-            updateUserAreaDiv();
+            // get active user
+            let activeUser = getActiveUser();
+            let classmates = getClassmates();
+            let otherUsers = [];
+            let otherUser = {};
 
-            // event handler for submit button
-            textSubmitArea_div.addEventListener('keypress', (e) => {
-                if(e.key === 'Enter'){
-                    e.preventDefault();
-                    let message = e.target.innerHTML;
-                    send(message, recipient);
-                    e.target.innerHTML = '';
-                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
-                }
-            });
+            // assign event to user button to update list of classmates on modal
+            modal_btn.addEventListener('click', (e) => {
+                updateModalClassmateDiv(classmates);
+            }, false);
 
-            // poll for incoming messagess
-            poll(sender, recipient);
+            // event delegation for modal buttons
+            modalClassmateArea_div.addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) return;
+
+                // get index of target button
+                let buttons = e.currentTarget.children;
+                let index = Array.from(buttons).indexOf(e.target);
+
+                // remove user from classmates and put him into otherUsers list
+                otherUser = classmates[index];
+                classmates.splice(index, 1);
+                otherUsers.push(otherUser);
+
+                // creat new chat
+                createNewChat(otherUser, activeUser);
+
+                // update user area
+                updateUserAreaDiv(otherUser);
+                updateRecipientAreaDiv(otherUser);
+
+                e.stopPropagation();
+            }, false);
+
+            // event delegation for user buttons
+            userArea_div.addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) return;
+
+                // get button element from element that was clicked
+                let button = closest(e.target, 'BUTTON');                
+
+                // get index of target button
+                let buttons = e.currentTarget.children;
+                let index = Array.from(buttons).indexOf(button);
+
+                // update user recipient area
+                otherUser = otherUsers[index];
+                updateRecipientAreaDiv(otherUser);
+
+                e.stopPropagation();
+            }, false);
+            
+            //// assign event handler for input area keypress
+            //textSubmitArea_div.addEventListener('keypress', (e) => {
+            //    if(e.key === 'Enter'){
+            //        e.preventDefault();
+            //        let message = e.target.innerHTML;
+            //        send(message, activeUser, otherUser);
+            //        e.target.innerHTML = '';
+            //        messageArea_div.scrollTop = messageArea_div.scrollHeight;
+            //    }
+            //});
+
+            //// poll for incoming messages
+            ////poll(sender, currentRecipient);
         }
 
         // run app
         main();
-    
+
+
+
+        /*****************************************************************
+        UTILITY FUNCTIONS
+        ******************************************************************/
+        function closest(elem, tagname){
+            do {
+                if (elem.tagName === tagname) return elem;
+                elem = elem.parentNode;
+            } while (elem);
+        }
     </script>
+
 </body>
 </html>
+
+
+
