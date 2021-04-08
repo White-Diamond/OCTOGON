@@ -275,37 +275,40 @@
         }
 
         async function poll(activeUser, otherUser){
-            console.log(otherUser);
-            console.log(Object.keys(otherUser).length);
-            //if (Object.keys(otherUser).length !== 0) {
-            //    // POST- retrieve from db
-            //    const request = {
-            //        method: 'POST',
-            //        credentials: 'same-origin',
-            //        headers: {
-            //            'Accept': 'application/json',
-            //            'X-Requested-With': 'XMLHttpRequest', 
-            //            'X-CSRFToken': csrftoken
-            //        },
-            //        body: JSON.stringify({
-            //            from: otherUser,
-            //            to: activeUser
-            //        })
-            //    };
 
-            //    // retrieve all unseen messages sent from other user to active user
-            //    const response = await fetch('retrieve/', request);
-            //    const jsonArray = await response.json();
+            /*
+             * Only poll for new messages if a recipient has been
+             * chosen by the active user, otherwise don't send POST
+             * request
+             */
 
-            //    // update DOM
-            //    for(let i = 0; i < jsonArray.length; i++){
-            //        let message = jsonArray[i]['message'];
-            //        messageArea_div.innerHTML += createReceivedMessageElem(message);
-            //    }
-            //} 
+            if (Object.keys(otherUser).length !== 0) {
+                // POST- retrieve from db
+                const request = {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest', 
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        from: otherUser,
+                        to: activeUser
+                    })
+                };
 
-            // poll
-            setTimeout(poll.bind(null, activeUser, otherUser), 1000);
+                // retrieve all unseen messages sent from other user to active user
+                const response = await fetch('retrieve/', request);
+                const jsonArray = await response.json();
+                console.log(jsonArray);
+
+                // update DOM
+                for(let i = 0; i < jsonArray.length; i++){
+                    let message = jsonArray[i]['message'];
+                    messageArea_div.innerHTML += createReceivedMessageElem(message);
+                }
+            } 
         }
 
         // attach event handlers
@@ -396,8 +399,11 @@
                 }
             });
 
-            // poll for incoming messages
-            poll(activeUser, otherUser);
+            // poll
+            setInterval(() => {
+                messageArea_div.scrollTop = messageArea_div.scrollHeight;
+                poll(activeUser, otherUser);
+            }, 100);
         }
 
         // run app

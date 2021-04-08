@@ -17,8 +17,6 @@ def create_new_chat(request):
     # already exists
     chatExists = Chat.objects.filter(to_id=recipient_id, from_id=sender_id).exists()
 
-    print(chatExists)
-    
     # new chat
     if(chatExists == False):
         newChat = Chat()
@@ -34,26 +32,31 @@ def retrieve_message(request):
     recipient_id = data['to']['email']
     sender_id = data['from']['email']
 
-    print(data)
-    print(recipient_id)
-    print(sender_id)
+    # doesn't exist
+    chatExists = Chat.objects.filter(to_id=recipient_id, from_id=sender_id).exists()
 
-    # find chatroom ID in Chat model
-    chatID = Chat.objects.get(to_id=sender_id, from_id=recipient_id)
+    if(chatExists == True):
+        # find chatroom ID in Chat model
+        chatID = Chat.objects.get(to_id=recipient_id, from_id=sender_id)
 
-    # get all messages with chat id
-    chatMessages = Message.objects.filter(chat=chatID)
+        # get chat messages
+        chatMessages = Message.objects.filter(chat=chatID)
 
-    # get an ordered QuerySet of all unseen messages
-    orderedMessagesByDate = chatMessages.filter(seen=0).order_by('created_at').values('message')
+        # get an ordered QuerySet of all unseen messages
+        orderedMessagesByDate = chatMessages.filter(seen=0).order_by('created_at').values('message')
 
-    # convert to QuerySet to JSON string
-    jsonMessages = json.dumps(list(orderedMessagesByDate))
+        # convert from QuerySet to JSON string
+        jsonMessages = json.dumps(list(orderedMessagesByDate))
 
-    # since messages have no been see update seen to 
-    orderedMessagesByDate.update(seen=1)
+        # since messages have now been see update seen to true=1
+        orderedMessagesByDate.update(seen=1)
 
+        return HttpResponse(jsonMessages)
+    
+
+    jsonMessages = json.dumps({})
     return HttpResponse(jsonMessages)
+
 
 def load_message(request):
     # save messages in request.body
