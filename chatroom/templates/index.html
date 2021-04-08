@@ -167,9 +167,9 @@
         function getActiveUser(){
 
              /*
-             * Right now this is just dummy data but in the future
-             * this information should be retrieved from local or session storage
-             */
+              * Right now this is just dummy data but in the future
+              * this information should be retrieved from local or session storage
+              */
 
             let name = prompt("Enter your name: ");
             let email = prompt("Enter your email: ");
@@ -184,9 +184,9 @@
         function getClassmates(){
 
              /*
-             * Right now this is just dummy data but in the future
-             * this information should be retrieved from the backend database
-             */
+              * Right now this is just dummy data but in the future
+              * this information should be retrieved from the backend database
+              */
              
             let classmates = [
                 {
@@ -274,33 +274,38 @@
             const response = await fetch('load/', request);
         }
 
-        async function poll(sender, currentRecipient){
-            // POST- retrieve from db
-            const request = {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest', 
-                    'X-CSRFToken': csrftoken
-                },
-                body: JSON.stringify({
-                    sender: sender,
-                    recipient: recipient
-                })
-            };
+        async function poll(activeUser, otherUser){
+            console.log(otherUser);
+            console.log(Object.keys(otherUser).length);
+            //if (Object.keys(otherUser).length !== 0) {
+            //    // POST- retrieve from db
+            //    const request = {
+            //        method: 'POST',
+            //        credentials: 'same-origin',
+            //        headers: {
+            //            'Accept': 'application/json',
+            //            'X-Requested-With': 'XMLHttpRequest', 
+            //            'X-CSRFToken': csrftoken
+            //        },
+            //        body: JSON.stringify({
+            //            from: otherUser,
+            //            to: activeUser
+            //        })
+            //    };
 
-            const response = await fetch('retrieve/', request);
-            const jsonArray = await response.json();
+            //    // retrieve all unseen messages sent from other user to active user
+            //    const response = await fetch('retrieve/', request);
+            //    const jsonArray = await response.json();
 
-            // update DOM
-            for(let i = 0; i < jsonArray.length; i++){
-                let message = jsonArray[i]['message'];
-                messageArea_div.innerHTML += createReceivedMessageElem(message);
-            }
+            //    // update DOM
+            //    for(let i = 0; i < jsonArray.length; i++){
+            //        let message = jsonArray[i]['message'];
+            //        messageArea_div.innerHTML += createReceivedMessageElem(message);
+            //    }
+            //} 
 
-            // poll for new unseen messages
-            setTimeout(poll, 1000);
+            // poll
+            setTimeout(poll.bind(null, activeUser, otherUser), 1000);
         }
 
         // attach event handlers
@@ -357,19 +362,42 @@
                 e.stopPropagation();
             }, false);
             
-            //// assign event handler for input area keypress
-            //textSubmitArea_div.addEventListener('keypress', (e) => {
-            //    if(e.key === 'Enter'){
-            //        e.preventDefault();
-            //        let message = e.target.innerHTML;
-            //        send(message, activeUser, otherUser);
-            //        e.target.innerHTML = '';
-            //        messageArea_div.scrollTop = messageArea_div.scrollHeight;
-            //    }
-            //});
+            // assign event handler for input area keypress
+            textSubmitArea_div.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter'){
+                    // prevent default page load on keypress
+                    e.preventDefault();
+                    // get the current message
+                    let message = e.target.innerHTML;
+                    // get the placeholder
+                    let attr = textSubmitArea_div.getAttributeNode('placeholder');
 
-            //// poll for incoming messages
-            ////poll(sender, currentRecipient);
+                    /*
+                     * If a recipient has been selected than send them the message
+                     * otherwise tell the active user to select a recipient before
+                     * sending a message
+                     */
+
+                    if (Object.keys(otherUser).length !== 0) {
+                        send(message, activeUser, otherUser);
+                        attr.textContent = "Message...";
+                    } else {
+                        attr.textContent = "You must add a user before sending a message...";
+                    }
+
+                    /*
+                     * Remove the message from the text area after it has been
+                     * sent and always keep most recent messages in focus by
+                     * scrolling to the bottom of the message area div
+                     */
+                    
+                    e.target.innerHTML = '';
+                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
+                }
+            });
+
+            // poll for incoming messages
+            poll(activeUser, otherUser);
         }
 
         // run app

@@ -11,22 +11,32 @@ def chat_page(request):
 def create_new_chat(request):
     # request data
     data = json.loads(request.body)
-    to_id = data['to']['email']
-    from_id = data['from']['email']
+    recipient_id = data['to']['email']
+    sender_id = data['from']['email']
+
+    # already exists
+    chatExists = Chat.objects.filter(to_id=recipient_id, from_id=sender_id).exists()
+
+    print(chatExists)
     
     # new chat
-    newChat = Chat()
-    newChat.to_id = to_id
-    newChat.from_id = from_id
-    newChat.save()
+    if(chatExists == False):
+        newChat = Chat()
+        newChat.to_id = recipient_id
+        newChat.from_id = sender_id
+        newChat.save()
 
     return HttpResponse("OK") 
 
 def retrieve_message(request):
     # save messages in request.body
     data = json.loads(request.body)
-    recipient_id = data['recipient']['email']
-    sender_id = data['sender']['email']
+    recipient_id = data['to']['email']
+    sender_id = data['from']['email']
+
+    print(data)
+    print(recipient_id)
+    print(sender_id)
 
     # find chatroom ID in Chat model
     chatID = Chat.objects.get(to_id=sender_id, from_id=recipient_id)
@@ -49,8 +59,8 @@ def load_message(request):
     # save messages in request.body
     data = json.loads(request.body)
     message = data['message']
-    recipient_id = data['recipient']['username']
-    sender_id = data['sender']['username']
+    recipient_id = data['to']['email']
+    sender_id = data['from']['email']
 
     # find chatroom ID in Chat model
     chat = Chat.objects.get(to_id=recipient_id, from_id=sender_id)
