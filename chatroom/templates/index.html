@@ -130,10 +130,34 @@
 
     {% csrf_token %}
     <script>
-        // constants and lists
+        /*
+        ***********************************************************************
+        SECURITY TOKENS & CONSTANTS
+        ***********************************************************************
+        */
+
         const csrftoken = Cookies.get('csrftoken');
 
-        // cache DOM elements
+        /*
+        ***********************************************************************
+        PRIVATE HELPER FUNCTIONS        
+        ***********************************************************************
+        */
+
+        function closest(elem, tagname){
+            do {
+                if (elem.tagName === tagname) return elem;
+                elem = elem.parentNode;
+            } while (elem);
+        }
+
+
+        /*
+        ***********************************************************************
+        CACHED DOM ELEMNTS
+        ***********************************************************************
+        */
+
         let userArea_div = document.getElementById("user-area");
         let recipientArea_div = document.getElementById("recipient-area");
         let messageArea_div = document.getElementById("message-area");
@@ -142,7 +166,12 @@
         let modal_btn = document.getElementById("modal-button");
         let searchBar_input = document.getElementById("search-bar");
 
-        // Dynamic HTML templatess
+        /*
+        ***********************************************************************
+        DYNAMIC HTML ELEMENTS
+        ***********************************************************************
+        */
+
         let createUserElem = function(user, count){
             return `<button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
                         <span class="text-truncate">
@@ -166,6 +195,12 @@
         let createModalClassmateElem = function(classmate){
             return `<button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="modal">${classmate.fullName}</button>`;
         } 
+
+        /*
+        ***********************************************************************
+        INIT FUNCTIONS
+        ***********************************************************************
+        */
 
         function getActiveUser(){
 
@@ -225,6 +260,13 @@
             return classmates;
         }
 
+
+        /*
+        ***********************************************************************
+        ATTACH DOM FUNCTIONS 
+        ***********************************************************************
+        */
+
         function updateModalClassmateDiv(classmates){
             modalClassmateArea_div.innerHTML = '';
             // create HTML user list
@@ -246,6 +288,12 @@
             let elem = createToElem(recipient.fullName);
             recipientArea_div.innerHTML = elem;
         }
+
+        /*
+        ***********************************************************************
+        DATABASE CONNECTION FUNCTIONS
+        ***********************************************************************
+        */
 
         async function createNewChat(to, from){
             // POST- update db
@@ -321,154 +369,149 @@
                 for(let i = 0; i < jsonArray.length; i++){
                     let message = jsonArray[i]['message'];
                     messageArea_div.innerHTML += createReceivedMessageElem(message);
+                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
                 }
             } 
         }
 
+        /*
+        ***********************************************************************
+        EVENTS        
+        ***********************************************************************
+        */
+
+        function searchBarEvent(e, otherUsers){
+            e.preventDefault();
+            let searchVal = e.target.value;
+
+            /*
+             * Below we are using Fuse.js- a fuzzy search algorithm in order
+             * to properly implement the search functionality. The result of 
+             * the search algorithm is an array of values that match the give 
+             * search value in order of closest match
+             */
+
+            const options = {
+                includeScore: true,
+                keys: ['fullName']
+            };
+            const fuse = new Fuse(otherUsers, options);
+            const result = fuse.search(searchVal);
+
+            if(searchVal !== ''){
+                // show filtered search
+                userArea_div.innerHTML = '';
+                result.forEach( (user) => {
+                    updateUserAreaDiv(user.item);
+                });
+            } else{
+                // revert back to normal user list
+                userArea_div.innerHTML = '';
+                otherUsers.forEach( (user) => {
+                    updateUserAreaDiv(user);
+                });
+            }
+        }
+
+        function modalButtonEvent(e, otherUser, classmates, otherUsers, activeUser){
+            if (e.target === e.currentTarget) return;
+
+            // get index of target button
+            let buttons = e.currentTarget.children;
+            let index = Array.from(buttons).indexOf(e.target);
+
+            // put classmate into otherUsers and remove classmate from its list
+            Object.assign(otherUser, classmates[index]);
+            otherUsers.push(classmates[index]);
+            classmates.splice(index, 1);
+
+            // creat new chat
+            createNewChat(otherUser, activeUser);
+
+            // update user area
+            updateUserAreaDiv(otherUser);
+            updateRecipientAreaDiv(otherUser);
+
+            e.stopPropagation();
+        }
+
+        function userButtonEvent(e, otherUser, otherUsers){
+            if (e.target === e.currentTarget) return;
+
+            // get button element from element that was clicked
+            let button = closest(e.target, 'BUTTON');                
+
+            // get index of target button
+            let buttons = e.currentTarget.children;
+            let index = Array.from(buttons).indexOf(button);
+
+            // update user recipient area
+            Object.assign(otherUser, otherUsers[index]);
+            updateRecipientAreaDiv(otherUser);
+
+            e.stopPropagation();
+        }
+
+        function inputMessageEvent(e, otherUser, activeUser){
+            if(e.key === 'Enter'){
+                // prevent default page load on keypress
+                e.preventDefault();
+                // get the current message
+                let message = e.target.innerHTML;
+                // get the placeholder
+                let attr = textSubmitArea_div.getAttributeNode('placeholder');
+
+                /*
+                 * If a recipient has been selected than send them the message
+                 * otherwise tell the active user to select a recipient before
+                 * sending a message
+                 */
+
+                if (Object.keys(otherUser).length !== 0) {
+                    send(message, activeUser, otherUser);
+                    attr.textContent = "Message...";
+                } else {
+                    attr.textContent = "You must select a user before sending a message...";
+                }
+
+                /*
+                 * Remove the message from the text area after it has been
+                 * sent and always keep most recent messages in focus by
+                 * scrolling to the bottom of the message area div
+                 */
+                
+                e.target.innerHTML = '';
+                messageArea_div.scrollTop = messageArea_div.scrollHeight;
+            }
+        }
+
         // attach event handlers
         function main(){
-            // get active user
+            // get active user and list of classmates
             let activeUser = getActiveUser();
             let classmates = getClassmates();
             let otherUsers = [];
             let otherUser = {};
 
-            // asign event to search bar for fuzzy searching
-            searchBar_input.addEventListener('input', (e)=>{
-                e.preventDefault();
-                let searchVal = e.target.value;
-
-                /*
-                * Below we are using Fuse.js fuzzy search algorithm in order
-                * to properly implement the search functionality the result of 
-                * the search algorithm is an array of values that match the give 
-                * search value in order of closest match
-                */
-
-                const options = {
-                    includeScore: true,
-                    keys: ['fullName']
-                };
-                const fuse = new Fuse(otherUsers, options);
-                const result = fuse.search(searchVal);
-
-                if(searchVal !== ''){
-                    // show filtered search
-                    userArea_div.innerHTML = '';
-                    result.forEach( (user) => {
-                        updateUserAreaDiv(user.item);
-                    });
-                } else{
-                    // revert back to normal user list
-                    userArea_div.innerHTML = '';
-                    otherUsers.forEach( (user) => {
-                        updateUserAreaDiv(user);
-                    });
-                }
-
-            }, false);
-
-            // assign event to user button to update list of classmates on modal
-            modal_btn.addEventListener('click', (e) => {
-                updateModalClassmateDiv(classmates);
-            }, false);
-
-            // event delegation for modal buttons
-            modalClassmateArea_div.addEventListener('click', (e) => {
-                if (e.target === e.currentTarget) return;
-
-                // get index of target button
-                let buttons = e.currentTarget.children;
-                let index = Array.from(buttons).indexOf(e.target);
-
-                // remove user from classmates and put him into otherUsers list
-                otherUser = classmates[index];
-                classmates.splice(index, 1);
-                otherUsers.push(otherUser);
-
-                // creat new chat
-                createNewChat(otherUser, activeUser);
-
-                // update user area
-                updateUserAreaDiv(otherUser);
-                updateRecipientAreaDiv(otherUser);
-
-                e.stopPropagation();
-            }, false);
-
-            // event delegation for user buttons
-            userArea_div.addEventListener('click', (e) => {
-                if (e.target === e.currentTarget) return;
-
-                // get button element from element that was clicked
-                let button = closest(e.target, 'BUTTON');                
-
-                // get index of target button
-                let buttons = e.currentTarget.children;
-                let index = Array.from(buttons).indexOf(button);
-
-                // update user recipient area
-                otherUser = otherUsers[index];
-                updateRecipientAreaDiv(otherUser);
-
-                e.stopPropagation();
-            }, false);
-            
-            // assign event handler for input area keypress
-            textSubmitArea_div.addEventListener('keypress', (e) => {
-                if(e.key === 'Enter'){
-                    // prevent default page load on keypress
-                    e.preventDefault();
-                    // get the current message
-                    let message = e.target.innerHTML;
-                    // get the placeholder
-                    let attr = textSubmitArea_div.getAttributeNode('placeholder');
-
-                    /*
-                     * If a recipient has been selected than send them the message
-                     * otherwise tell the active user to select a recipient before
-                     * sending a message
-                     */
-
-                    if (Object.keys(otherUser).length !== 0) {
-                        send(message, activeUser, otherUser);
-                        attr.textContent = "Message...";
-                    } else {
-                        attr.textContent = "You must add a user before sending a message...";
-                    }
-
-                    /*
-                     * Remove the message from the text area after it has been
-                     * sent and always keep most recent messages in focus by
-                     * scrolling to the bottom of the message area div
-                     */
-                    
-                    e.target.innerHTML = '';
-                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
-                }
-            });
+            // search bar event
+            searchBar_input.addEventListener('input', (e)=>{ searchBarEvent(e, otherUsers); }, false);
+            // add-new-user button event
+            modal_btn.addEventListener('click', (e) => { updateModalClassmateDiv(classmates); }, false);
+            // modal button event
+            modalClassmateArea_div.addEventListener('click', (e) => { modalButtonEvent(e, otherUser, classmates, otherUsers, activeUser); }, false);
+            // user button event
+            userArea_div.addEventListener('click', (e) => { userButtonEvent(e, otherUser, otherUsers); }, false);
+            // message input area event
+            textSubmitArea_div.addEventListener('keypress', (e) => { inputMessageEvent(e, otherUser, activeUser); }, false);
 
             // poll
             setInterval(() => {
-                messageArea_div.scrollTop = messageArea_div.scrollHeight;
                 poll(activeUser, otherUser);
             }, 100);
         }
 
         // run app
         main();
-
-
-
-        /*****************************************************************
-        UTILITY FUNCTIONS
-        ******************************************************************/
-        function closest(elem, tagname){
-            do {
-                if (elem.tagName === tagname) return elem;
-                elem = elem.parentNode;
-            } while (elem);
-        }
     </script>
 
 </body>
