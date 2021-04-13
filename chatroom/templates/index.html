@@ -267,20 +267,30 @@
         ***********************************************************************
         */
 
-        function updateModalClassmateDiv(classmates){
-            modalClassmateArea_div.innerHTML = '';
-            // create HTML user list
-            for(let i = 0; i < classmates.length; i++){
-                let classmate = classmates[i];
-                let elem = createModalClassmateElem(classmate, 0)
-                modalClassmateArea_div.innerHTML += elem;
-            }
+        // attachUserListToUserDiv(otherUser)
+        // attachRecipientElemToRecipientDiv(recipient)
+        // attachMessageListToMessageDiv(messages)
+
+        function attachClassmateListToModalDiv(classmates){
+            // create HTML list
+            let htmlList = classmates.reduce( (htmlList, classmate)=> {
+                let elem = createModalClassmateElem(classmate, 0);
+                htmlList += elem;
+                return htmlList;
+            }, '');
+            // attach html list to modal div
+            modalClassmateArea_div.innerHTML = htmlList;
         }
 
-        function updateUserAreaDiv(otherUser){
-            // create HTML user button
-            let elem = createUserElem(otherUser, 0)
-            userArea_div.innerHTML += elem;
+        function attachUserListToUserDiv(otherUsers){
+            // create HTML list
+            let htmlList = otherUsers.reduce( (htmlList, otherUser)=> {
+                let elem = createUserElem(otherUser, 0);
+                htmlList += elem;
+                return htmlList;
+            }, '');
+            // attach html list to modal div
+            userArea_div.innerHTML = htmlList;
         }
 
         function updateRecipientAreaDiv(recipient){
@@ -380,7 +390,7 @@
         ***********************************************************************
         */
 
-        function searchBarEvent(e, otherUsers){
+        function searchBarEvent(e, otherUsers, filteredUsers){
             e.preventDefault();
             let searchVal = e.target.value;
 
@@ -391,29 +401,27 @@
              * search value in order of closest match
              */
 
-            const options = {
-                includeScore: true,
-                keys: ['fullName']
-            };
+            const options = { keys: ['fullName'] };
             const fuse = new Fuse(otherUsers, options);
             const result = fuse.search(searchVal);
+            const filter = result.map( (o) => { return o.item; } );
 
             if(searchVal !== ''){
+                // copy result values to filterUsers array
+                filteredUsers.splice(0, filteredUsers.length);
+                filter.forEach( (user, index) => { filteredUsers[index] = user; } );
                 // show filtered search
-                userArea_div.innerHTML = '';
-                result.forEach( (user) => {
-                    updateUserAreaDiv(user.item);
-                });
+                attachUserListToUserDiv(filteredUsers);
             } else{
-                // revert back to normal user list
-                userArea_div.innerHTML = '';
-                otherUsers.forEach( (user) => {
-                    updateUserAreaDiv(user);
-                });
+                // copy otherUsers values to filterUsers array
+                filteredUsers.splice(0, filteredUsers.length);
+                otherUsers.forEach( (user, index) => { filteredUsers[index] = user; } );
+                // show full user list
+                attachUserListToUserDiv(otherUsers);
             }
         }
 
-        function modalButtonEvent(e, otherUser, classmates, otherUsers, activeUser){
+        function modalButtonEvent(e, otherUser, classmates, otherUsers, filteredUsers, activeUser){
             if (e.target === e.currentTarget) return;
 
             // get index of target button
@@ -423,13 +431,14 @@
             // put classmate into otherUsers and remove classmate from its list
             Object.assign(otherUser, classmates[index]);
             otherUsers.push(classmates[index]);
+            filteredUsers.push(classmates[index]);
             classmates.splice(index, 1);
 
             // creat new chat
             createNewChat(otherUser, activeUser);
 
             // update user area
-            updateUserAreaDiv(otherUser);
+            attachUserListToUserDiv(otherUsers);
             updateRecipientAreaDiv(otherUser);
 
             e.stopPropagation();
@@ -491,16 +500,17 @@
             let activeUser = getActiveUser();
             let classmates = getClassmates();
             let otherUsers = [];
+            let filteredUsers = [];
             let otherUser = {};
 
             // search bar event
-            searchBar_input.addEventListener('input', (e)=>{ searchBarEvent(e, otherUsers); }, false);
+            searchBar_input.addEventListener('input', (e)=>{ searchBarEvent(e, otherUsers, filteredUsers); }, false);
             // add-new-user button event
-            modal_btn.addEventListener('click', (e) => { updateModalClassmateDiv(classmates); }, false);
+            modal_btn.addEventListener('click', (e) => { attachClassmateListToModalDiv(classmates); }, false);
             // modal button event
-            modalClassmateArea_div.addEventListener('click', (e) => { modalButtonEvent(e, otherUser, classmates, otherUsers, activeUser); }, false);
+            modalClassmateArea_div.addEventListener('click', (e) => { modalButtonEvent(e, otherUser, classmates, otherUsers, filteredUsers, activeUser); }, false);
             // user button event
-            userArea_div.addEventListener('click', (e) => { userButtonEvent(e, otherUser, otherUsers); }, false);
+            userArea_div.addEventListener('click', (e) => { userButtonEvent(e, otherUser, filteredUsers); }, false);
             // message input area event
             textSubmitArea_div.addEventListener('keypress', (e) => { inputMessageEvent(e, otherUser, activeUser); }, false);
 
