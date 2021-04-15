@@ -2,15 +2,18 @@
 <html lang="en">
     {%load static %}
 <head>
-<link rel="stylesheet" href="{% static 'css/messageBoard.css' %}">
+<!-- The (now "U") thing at the end of this stylesheet reference forces a refresh
+of the stylesheet. When testing and doing frequent updates of the stylesheet it's annoying
+to have to clear the cached stylesheet manually. This can be taken out in production.-->
+<link rel="stylesheet" href="{% static 'css/messageBoard.css' %}?{% now "U" %}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="viewport" content="height=device-height, initial-scale=1.0">
 </head>
 <body>
-    <h1 class="board_title">OCTOGON</h1>
+    <div class="board_title">OCTOGON</div>
 
-    <div class="make_thread_btn">
-        New Thread
+    <div class="make_thread_btn" onclick="threadcreate(this)">
+        Create New Thread
     </div>
 
     <!-- Frame which contains all thread and post related content -->
@@ -18,44 +21,54 @@
         
         <!-- Left side of webpage with a list of threads in boxes -->
         <div class="select_thread_frame">
-            <div class="thread_selection_box" onclick="changeThread(this, 1)">
-                Thread #1
-            </div>
-            <div class="thread_selection_box">
-                Thread #2
-            </div>
-            <div class="thread_selection_box">
-                Thread #3
-            </div>
-            <div class="thread_selection_box">
-                Thread #4
-            </div>
 
             <!-- Loop through the list of all threads in messageboard and display them on
             the left side of the screen each within their own box -->
-            {% for thread in context.threadList %}
-            <div class="thread_selection_box" onclick="changeThread(this, {{thread.threadID}})">
-                I am thread number {{thread.thread_ID}}
-                This is my topic:
-                {{thread.threadTopic}}
+            {% for thread in threadList %}
+            {% if thread.thread_ID == currentThreadNum %}
+            <div class="thread_selection_box" onclick="changeThread(this, {{thread.thread_ID}})" 
+            style="background: #FFBB99; border: 1px solid #BBBB00;">
+            {% else %}
+            <div class="thread_selection_box" onclick="changeThread(this, {{thread.thread_ID}})">
+            {% endif %}
+                <div>
+                    {{thread.threadTopic}}
+                </div>
+                <div style="font-size: 16px; font-weight: normal;">
+                    {% for pst in orig_posts %}
+                    {% if pst.owning_thread_ID == thread.thread_ID %}
+                    {{pst.main_text}}
+                    {% endif %}
+                    {% endfor %}
+                </div>
             </div>
             {% endfor %}
         </div>
 
         <!-- Right side of webpage with the list of posts for the selected thread -->
         <div class="display_thread_frame">
-            <p>
-                This is the display thread frame
-            </p>
             <!-- Loop through the list of all posts in thread and display them on
             the right side of the screen each within their own box -->
-            {% for post in context.posts %}
+            {% for post in posts %}
             <div class="post_box">
-                I am post number {{post.post_ID}}
-                This is my text:
+                {% if post.post_ID == 0 %}
+                <p style="font-size: 20px; font-weight: bold; text-align: left;">
+                {{currentThread.threadTopic}}
+                </p><p>
+                {% else %}
+                <p>
+                {% endif %}
                 {{post.main_text}}
+                </p>
             </div>
             {% endfor %}
+            {% if posts %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="Submit">
+            </form>
+            {% endif %}
         </div>
 
     </div>
@@ -65,10 +78,24 @@
     {% block javascript %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
+    // Used to change the posts displayed when user clicks on thread
     function changeThread(threadBox, ID){
-        location.href("{{site.domain}}thread/{{thread.thread_ID}}");
+        theURL = document.location.origin + "/messageboard" + "/thread/" + (ID).toString();
+        document.location.href = theURL;
     }
-    </script>>
+    
+    // Takes user to thread creation page
+    function threadcreate(newThread_div){
+        theURL = document.location.origin + "/threadcreate/";
+        document.location.href = theURL;
+    }
+
+    // Takes user to post creation page
+    function postcreate(post_btn_div, ID){
+        theURL = document.location.origin + "/newpost/" + (ID).toString();
+        document.location.href = theURL;
+    }
+    </script>
     {% endblock javascript %}
 
 </body>
