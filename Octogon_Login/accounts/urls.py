@@ -5,6 +5,6 @@ from .views import SignUpView
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
-    path('', views.base),
-    path('', views.pswrd),
+    path('base/', views.base, name='base'),
+    path('password_reset_form/', views.pswrd, name='pswrd'),
 ]

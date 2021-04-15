@@ -8,8 +8,8 @@ class SignUpView(generic.CreateView):
     success_url = reverse_lazy('login')
     template_name = 'registration/signup.html'
 
-def base (request):
+def base(request):
   return render(request, 'base.html')
 
 def pswrd(request):
-  return render(request, 'pswrd_recv.html')
+  return render(request, 'registration/password_reset_form.html')
