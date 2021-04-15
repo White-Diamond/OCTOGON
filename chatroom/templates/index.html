@@ -219,7 +219,7 @@
             return obj;
         }
 
-        function getClassmates(){
+        function getClassmates(activeUser){
 
              /*
               * Right now this is just dummy data but in the future
@@ -257,19 +257,32 @@
                 }
             ];
 
+            classmates = classmates.filter((user) => {
+                return user.email !== activeUser.email;
+            });
+
+            console.log(classmates);
+
             return classmates;
         }
 
 
         /*
         ***********************************************************************
-        ATTACH DOM FUNCTIONS 
+        ATTACH/CHAIN DYNAMIC HTML ELEMENTS TO DOM
         ***********************************************************************
         */
 
-        // attachUserListToUserDiv(otherUser)
-        // attachRecipientElemToRecipientDiv(recipient)
-        // attachMessageListToMessageDiv(messages)
+        function attachMessageListToMessageDiv(messages){
+            // create HTML list
+            let htmlList = classmates.reduce( (htmlList, classmate)=> {
+                let elem = createModalClassmateElem(classmate, 0);
+                htmlList += elem;
+                return htmlList;
+            }, '');
+            // attach html list to modal div
+            modalClassmateArea_div.innerHTML = htmlList;
+        }
 
         function attachClassmateListToModalDiv(classmates){
             // create HTML list
@@ -293,10 +306,22 @@
             userArea_div.innerHTML = htmlList;
         }
 
-        function updateRecipientAreaDiv(recipient){
+        function attachRecipientElemToRecipientDiv(recipient){
             // create HTML recipient element
             let elem = createToElem(recipient.fullName);
             recipientArea_div.innerHTML = elem;
+        }
+
+        function chainSentMessageToMessageDiv(message){
+            // create HTML recipient element
+            let elem = createSentMessageElem(message);
+            messageArea_div.innerHTML += elem;
+        }
+
+        function chainRecievedMessageToMessageDiv(message){
+            // create HTML recipient element
+            let elem = createReceivedMessageElem(message);
+            messageArea_div.innerHTML += elem;
         }
 
         /*
@@ -305,7 +330,7 @@
         ***********************************************************************
         */
 
-        async function createNewChat(to, from){
+        async function getConversation(to, from){
             // POST- update db
             const request = {
                 method: 'POST',
@@ -321,12 +346,14 @@
                 })
             };
 
-            const response = await fetch('create/', request);
+            const response = await fetch('retrieve_conversation/', request);
+            const jsonArray = await response.json();
+            console.log(jsonArray);
         }
 
         async function send(message, activeUser, otherUser){
             // udpate DOM
-            messageArea_div.innerHTML += createSentMessageElem(message);
+            chainSentMessageToMessageDiv(message);
 
             // POST- update db
             const request = {
@@ -344,13 +371,13 @@
                 })
             };
 
-            const response = await fetch('load/', request);
+            const response = await fetch('load_message/', request);
         }
 
-        async function poll(activeUser, otherUser){
+        async function poll_active(activeUser, otherUser){
 
             /*
-             * Only poll for new messages if a recipient has been
+             * Only poll for unseen messages if a recipient has been
              * chosen by the active user, otherwise don't send POST
              * request
              */
@@ -372,16 +399,71 @@
                 };
 
                 // retrieve all unseen messages sent from other user to active user
-                const response = await fetch('retrieve/', request);
+                const response = await fetch('retrieve_active_message/', request);
                 const jsonArray = await response.json();
 
                 // update DOM
                 for(let i = 0; i < jsonArray.length; i++){
                     let message = jsonArray[i]['message'];
-                    messageArea_div.innerHTML += createReceivedMessageElem(message);
+                    chainRecievedMessageToMessageDiv(message);
                     messageArea_div.scrollTop = messageArea_div.scrollHeight;
                 }
             } 
+        }
+
+        async function poll_inactive(activeUser, filteredUsers, otherUsers, classmates){
+
+            /*
+             * Only poll for messages even if a recipient has not been
+             * chosen by the active user, otherwise don't send POST
+             * request
+             */
+
+            // POST- retrieve from db
+            if(classmates.length !== 0){
+
+                const request = {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest', 
+                        'X-CSRFToken': csrftoken
+                    },
+                };
+
+                // retrieve all unseen messages from otherClassmate
+                for(let i = 0; i < classmates.length; i++){
+                    request.body = JSON.stringify({
+                        from: classmates[i],
+                        to: activeUser
+                    });
+
+                    const response = await fetch('retrieve_inactive_message/', request);
+                    const jsonArray = await response.json();
+
+                    if(jsonArray.length !== 0){
+                        for(let i = 0; i < jsonArray.length; i++){
+                            let message = jsonArray[i]['message'];
+                            chainRecievedMessageToMessageDiv(message);
+                            messageArea_div.scrollTop = messageArea_div.scrollHeight;
+                        }
+                    }
+
+                    if(jsonArray.length !== 0){
+                        // remove user from classmates
+                        let index = classmates.map(classmate => classmate.email).indexOf(jsonArray[0].from_id);
+                        let obj = classmates[index];
+                        classmates.splice(index, 1);
+                        console.log(obj);
+                        filteredUsers.unshift(obj);
+                        otherUsers.unshift(obj);
+                        // update DOM elements
+                        attachUserListToUserDiv(filteredUsers);
+                        attachRecipientElemToRecipientDiv(obj);
+                    }
+                }
+            }
         }
 
         /*
@@ -434,17 +516,14 @@
             filteredUsers.push(classmates[index]);
             classmates.splice(index, 1);
 
-            // creat new chat
-            createNewChat(otherUser, activeUser);
-
             // update user area
             attachUserListToUserDiv(otherUsers);
-            updateRecipientAreaDiv(otherUser);
+            attachRecipientElemToRecipientDiv(otherUser);
 
             e.stopPropagation();
         }
 
-        function userButtonEvent(e, otherUser, otherUsers){
+        function userButtonEvent(e, otherUser, activeUser, filteredUsers){
             if (e.target === e.currentTarget) return;
 
             // get button element from element that was clicked
@@ -455,8 +534,8 @@
             let index = Array.from(buttons).indexOf(button);
 
             // update user recipient area
-            Object.assign(otherUser, otherUsers[index]);
-            updateRecipientAreaDiv(otherUser);
+            Object.assign(otherUser, filteredUsers[index]);
+            attachRecipientElemToRecipientDiv(otherUser);
 
             e.stopPropagation();
         }
@@ -498,7 +577,7 @@
         function main(){
             // get active user and list of classmates
             let activeUser = getActiveUser();
-            let classmates = getClassmates();
+            let classmates = getClassmates(activeUser);
             let otherUsers = [];
             let filteredUsers = [];
             let otherUser = {};
@@ -510,13 +589,19 @@
             // modal button event
             modalClassmateArea_div.addEventListener('click', (e) => { modalButtonEvent(e, otherUser, classmates, otherUsers, filteredUsers, activeUser); }, false);
             // user button event
-            userArea_div.addEventListener('click', (e) => { userButtonEvent(e, otherUser, filteredUsers); }, false);
+            userArea_div.addEventListener('click', (e) => { userButtonEvent(e, otherUser, activeUser, filteredUsers); }, false);
             // message input area event
             textSubmitArea_div.addEventListener('keypress', (e) => { inputMessageEvent(e, otherUser, activeUser); }, false);
 
+
             // poll
             setInterval(() => {
-                poll(activeUser, otherUser);
+                poll_active(activeUser, otherUser);
+            }, 100);
+
+            // poll
+            setInterval(() => {
+                poll_inactive(activeUser, filteredUsers, otherUsers, classmates);
             }, 100);
         }
 

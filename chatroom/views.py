@@ -1,62 +1,62 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.http import HttpResponse
-from .models import Chat, Message
+from .models import Message
 import json
 
 # Create your views here.
 def chat_page(request):
     return render(request, "index.html")
 
-def create_new_chat(request):
-    # request data
-    data = json.loads(request.body)
-    recipient_id = data['to']['email']
-    sender_id = data['from']['email']
+def retrieve_conversation(request):
+    return HttpResponse("OK")
 
-    # already exists
-    chatExists = Chat.objects.filter(to_id=recipient_id, from_id=sender_id).exists()
-
-    # new chat
-    if(chatExists == False):
-        newChat = Chat()
-        newChat.to_id = recipient_id
-        newChat.from_id = sender_id
-        newChat.save()
-
-    return HttpResponse("OK") 
-
-def retrieve_message(request):
+def retrieve_active_message(request):
     # save messages in request.body
     data = json.loads(request.body)
     recipient_id = data['to']['email']
     sender_id = data['from']['email']
 
-    # doesn't exist
-    chatExists = Chat.objects.filter(to_id=recipient_id, from_id=sender_id).exists()
+    # Message exists
+    chat = Message.objects.filter(to_id=recipient_id, from_id=sender_id)
 
-    if(chatExists == True):
-        # find chatroom ID in Chat model
-        chatID = Chat.objects.get(to_id=recipient_id, from_id=sender_id)
-
-        # get chat messages
-        chatMessages = Message.objects.filter(chat=chatID)
-
+    if(chat.exists()):
         # get an ordered QuerySet of all unseen messages
-        orderedMessagesByDate = chatMessages.filter(seen=0).order_by('created_at').values('message')
+        orderedMessagesByDate = chat.filter(seen=0).order_by('created_at').values('message')
 
         # convert from QuerySet to JSON string
         jsonMessages = json.dumps(list(orderedMessagesByDate))
 
-        # since messages have now been see update seen to true=1
+        # since messages have now been seen update seen to true=1
         orderedMessagesByDate.update(seen=1)
 
         return HttpResponse(jsonMessages)
-    
 
     jsonMessages = json.dumps({})
     return HttpResponse(jsonMessages)
 
+def retrieve_inactive_message(request):
+    # save messages in request.body
+    data = json.loads(request.body)
+    recipient_id = data['to']['email']
+    sender_id = data['from']['email']
+
+    # Message exists
+    chat = Message.objects.filter(to_id=recipient_id, from_id=sender_id).values('message', 'from_id')
+    print(chat)
+
+    if(chat.exists()):
+        # convert from QuerySet to JSON string
+        jsonMessages = json.dumps(list(chat))
+        print(jsonMessages)
+
+        # since messages have now been seen update seen to true=1
+        chat.update(seen=1)
+
+        return HttpResponse(jsonMessages)
+
+    jsonMessages = json.dumps([])
+    return HttpResponse(jsonMessages)
 
 def load_message(request):
     # save messages in request.body
@@ -65,13 +65,11 @@ def load_message(request):
     recipient_id = data['to']['email']
     sender_id = data['from']['email']
 
-    # find chatroom ID in Chat model
-    chat = Chat.objects.get(to_id=recipient_id, from_id=sender_id)
-
     # add message to Message model
     newMessage = Message()
+    newMessage.to_id = recipient_id
+    newMessage.from_id = sender_id
     newMessage.message = message
-    newMessage.chat = chat
     newMessage.save()
 
     return HttpResponse("OK")
