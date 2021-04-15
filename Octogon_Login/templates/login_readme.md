@@ -11,10 +11,14 @@
    - Fontawesome Version: 4.7.0
 
 ## How to Run It?<br>
-   - Follow these instructions to run the server:
+   - Follow these instructions to run the server for the first time:
       - follow [these](https://pip.pypa.io/en/stable/installing/) instructions if you don't have pip installed
       - pip install pipenv
       - pipenv install django
       - pipenv shell
+      - python manage.py migrate
+      - python manage.py runserver
+
+    - Follow these instructions once you have already installed everything above:
       - python manage.py migrate
       - python manage.py runserver
