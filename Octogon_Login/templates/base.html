@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html class="no-js" lang="">
+<head>
+  {% load static %}
+  <meta charset="utf-8">
+  <title>Sign In or Sign Up</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+
+  <link rel="manifest" href=" {% static 'site.webmanifest' %} ">
+
+  <!-- favicon.ico located in the root directory -->
+  <link rel="icon" href=" {% static 'favicon.ico' %} " type="image/x-icon" />
+  <link rel="shortcut icon" href=" {% static 'favicon.ico' %} " type="image/x-icon" />
+
+  <link rel="stylesheet" href=" {% static 'css/normalize.css' %} ">
+  <link rel="stylesheet" href=" {% static 'css/main.css' %} ">
+  <link rel="stylesheet" href=" {% static 'css/styles.css' %} ">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+  integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+  crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/b7e1ed973e.js" crossorigin="anonymous"></script>
+
+  <meta name="theme-color" content="#fafafa">
+
+  <!-- background -->
+  <style>
+    body {
+    background-color: #1f1815;
+		background-attachment: scroll;
+		background-image: url(" {% static 'img/bg.jpg' %} ");
+		background-position: top left;
+		background-repeat: no-repeat;
+		background-size: 100%;
+    }
+  </style>
+
+</head>
+<body>
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+</body>
+</html>
