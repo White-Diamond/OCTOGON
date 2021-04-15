@@ -10,6 +10,9 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
 <meta name="viewport" content="height=device-height, initial-scale=1.0">
 </head>
 <body>
+    <h1>
+        Hello, {{userid}}!
+    </h1>
     <div class="board_title">OCTOGON</div>
 
     <div class="make_thread_btn" onclick="threadcreate(this)">
@@ -34,7 +37,7 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
                 <div>
                     {{thread.threadTopic}}
                 </div>
-                <div style="font-size: 16px; font-weight: normal;">
+                <div style="color: #666666;font-size: 16px; font-weight: normal;">
                     {% for pst in orig_posts %}
                     {% if pst.owning_thread_ID == thread.thread_ID %}
                     {{pst.main_text}}
@@ -51,23 +54,33 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
             the right side of the screen each within their own box -->
             {% for post in posts %}
             <div class="post_box">
+                <div style="font-size: 12px; margin: 2px 2px 2px 2px; color: #666666;">
+                    User: {{post.username}}
+                </div>
                 {% if post.post_ID == 0 %}
-                <p style="font-size: 20px; font-weight: bold; text-align: left;">
+                <div style="font-size: 30px; font-weight: bold; text-align: left; margin: 4px 0px 0px 0px">
                 {{currentThread.threadTopic}}
-                </p><p>
+                </div><div>
                 {% else %}
-                <p>
+                <div>
                 {% endif %}
                 {{post.main_text}}
-                </p>
+                </div>
             </div>
             {% endfor %}
             {% if posts %}
+            <div style="margin-left: 20px; margin-top: 20px;">
             <form action="" method="POST">
                 {% csrf_token %}
-                {{ form }}
+                <div>
+                {{form.mainText.label}}
+                </div>
+                <div style="width:100%;">
+                {{ form.mainText }}
+                </div>
                 <input type="submit" value="Submit">
             </form>
+            </div>
             {% endif %}
         </div>
 

@@ -22,6 +22,7 @@ def basicResponse (request):
 def mainBoard (request):
     # Get all threads
     context = {}
+
     context['threadList'] = list(Thread.objects.all())
     context['posts'] = []
     return render(request, "board.html", context)
@@ -49,7 +50,7 @@ def getThreadPosts (request, thrdID):
 
             # Create new post obeject to be inserted into database
             this_thread = Thread.objects.get(thread_ID=thrdID)
-            post_entry = Post.objects.create(main_text = post_main_text, thread = this_thread, post_ID = postID, owning_thread_ID = thrdID)
+            post_entry = Post.objects.create(main_text = post_main_text, thread = this_thread, post_ID = postID, owning_thread_ID = thrdID, username=request.user)
             
             # Save the newly created post in the database
             post_entry.save()
@@ -81,6 +82,7 @@ def getThreadPosts (request, thrdID):
         return render(request, 'board.html', context)
     
     # Render the messageboard with all the posts from the currently selected thread
+    context['userid'] = request.user
     context['currentThreadNum'] = thrdID
     context['currentThread'] = Thread.objects.get(thread_ID=thrdID)
     postList = list(Post.objects.filter(thread__thread_ID__exact=thrdID))
@@ -117,7 +119,7 @@ def userMakesThread (request):
 
             # Create new thread and post obejects to be inserted into database
             thread_entry = Thread.objects.create(thread_ID = thrdID, threadTopic = thrdTopic, currentPostNumber = 1, main_post_id = 0)
-            post_entry = Post.objects.create(main_text = post_main_text, thread = thread_entry, post_ID = 0, owning_thread_ID = thrdID)
+            post_entry = Post.objects.create(main_text = post_main_text, thread = thread_entry, post_ID = 0, owning_thread_ID = thrdID, username=request.user)
             
             # Save the newly created thread and post in the database
             thread_entry.save()
