@@ -13,6 +13,12 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
     <h1>
         Hello, {{userid}}!
     </h1>
+    <button onclick="gotoChatroom(this)">
+        Go to My Chatroom
+    </button>
+    <button onclick="gotoUserpage(this)">
+        View My Profile
+    </button>
     <div class="board_title">OCTOGON</div>
 
     <div class="make_thread_btn" onclick="threadcreate(this)">
@@ -29,12 +35,16 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
             the left side of the screen each within their own box -->
             {% for thread in threadList %}
             {% if thread.thread_ID == currentThreadNum %}
-            <div class="thread_selection_box" onclick="changeThread(this, {{thread.thread_ID}})" 
+            <div id="thread{{thread.thread_ID}}" class="thread_selection_box" onclick="changeThread(this, {{thread.thread_ID}})" 
             style="background: #FFBB99; border: 1px solid #BBBB00;">
             {% else %}
-            <div class="thread_selection_box" onclick="changeThread(this, {{thread.thread_ID}})">
+            <div id="thread{{thread.thread_ID}}" class="thread_selection_box" onclick="changeThread(this, {{thread.thread_ID}})">
             {% endif %}
-                <div>
+                <div style="color: #666666; font-size: 12px; ">
+                    Posted: {{thread.thread_date}}<br>
+                    Thread ID: {{thread.thread_ID}}
+                </div>
+                <div id="threadTopic{{thread.thread_ID}}">
                     {{thread.threadTopic}}
                 </div>
                 <div style="color: #666666;font-size: 16px; font-weight: normal;">
@@ -53,7 +63,7 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
             <!-- Loop through the list of all posts in thread and display them on
             the right side of the screen each within their own box -->
             {% for post in posts %}
-            <div class="post_box">
+            <div id="post{{post.post_ID}}" class="post_box">
                 <div style="font-size: 12px; margin: 2px 2px 2px 2px; color: #666666;">
                     User: {{post.username}}
                 </div>
@@ -70,14 +80,9 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
             {% endfor %}
             {% if posts %}
             <div style="margin-left: 20px; margin-top: 20px;">
-            <form action="" method="POST">
+            <form id="postInput" action="" method="POST">
                 {% csrf_token %}
-                <div>
-                {{form.mainText.label}}
-                </div>
-                <div style="width:100%;">
-                {{ form.mainText }}
-                </div>
+                {{ form }}
                 <input type="submit" value="Submit">
             </form>
             </div>
@@ -100,6 +105,18 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
     // Takes user to thread creation page
     function threadcreate(newThread_div){
         theURL = document.location.origin + "/threadcreate/";
+        document.location.href = theURL;
+    }
+
+    // Takes user to post creation page
+    function gotoChatroom(post_btn_div, ID){
+        theURL = document.location.origin + "/chatroom/";
+        document.location.href = theURL;
+    }
+
+    // Takes user to post creation page
+    function gotoUserpage(post_btn_div, ID){
+        theURL = document.location.origin + "/profilepage/";
         document.location.href = theURL;
     }
 

@@ -22,9 +22,12 @@ def basicResponse (request):
 def mainBoard (request):
     # Get all threads
     context = {}
-
+    context['userid'] = request.user
     context['threadList'] = list(Thread.objects.all())
+    context['currentThreadNum'] = None
+    context['currentThread'] = None
     context['posts'] = []
+    context['orig_posts'] = list(Post.objects.filter(post_ID=0))
     return render(request, "board.html", context)
 
 
@@ -69,8 +72,10 @@ def getThreadPosts (request, thrdID):
     except:
         redirectPage = "/messageboard/"
         context['posts'] = []
+        context['orig_posts'] = list(Post.objects.filter(post_ID=0))
         context['currentThreadNum'] = 1
         context['currentThread'] = None
+        context['userid'] = request.user
         return render(request, 'board.html', context)
 
     # Attempt to get posts pertaining to thread. If no posts (supposed to be impossible
@@ -79,6 +84,7 @@ def getThreadPosts (request, thrdID):
         postList = list(Post.objects.all())
     except:
         context['posts'] = []
+        context['userid'] = request.user
         return render(request, 'board.html', context)
     
     # Render the messageboard with all the posts from the currently selected thread
