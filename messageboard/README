@@ -1,19 +1,14 @@
 ## Description
 This app is the implementation of a messageboard for the webapp where a majority of communication will take place.
 
-4/2/2021: As of right now, the app is not finished. There still needs to be more development on this app. Further works
-includes:
-- Page updates when clicking on specific threads to get that thread's posts
-- Handling exceptions to user input when threads are created
-- Getting posts
-- 
-
 ## Testing
-Testing tests the ability to retreive data and make sure Posts can easily be associated with a certain thread and vise vera.
+Testing tests the ability to retreive data and make sure Posts can easily be associated with a certain 
+thread and vise vera. Also tests user's interaction with site to ensure they can make threads and posts.
 
 
 #### Requirements: 
 - python 3
+- Webdriver for python (GeckoDriver uses Firefox: https://github.com/mozilla/geckodriver/releases)
 - packages included in OCTOGON/requirments.txt
 
 If you don't have python3 installed, then please install it, create a virtual environment,
