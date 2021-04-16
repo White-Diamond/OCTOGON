@@ -9,3 +9,4 @@ class createThreadForm (forms.Form):
 
 class createPostForm (forms.Form):
     mainText = forms.CharField(widget=forms.Textarea, label='Make Post')
+    
