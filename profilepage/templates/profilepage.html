@@ -11,44 +11,52 @@
     <title>User Information</title>
   </head>
   <body style="background-color:purple;">
+    <!-- Display Title -->
     <h1  class="text-white text-center">User Information</h1>
     <p></br></br></p>
+    <!-- Card for Profile Information -->
     <div class="card align-item-center text-white bg-secondary" style="width: 21.5em;margin:0 auto;">
         <div class="card-body" style="background-color: .bg-secondary.bg-gradient;">
+            <!-- Organized table within card -->
             <div class="container">
+                <!-- Row1 -->
                 <div class="row">
                     <div class="col align-self-start">
                         Name:
                     </div>
-                    <div class="col align-self-end">
+                    <div class="col align-self-end" id="name">
                         {{ firstname }}
                         {{ lastname }}
                     </div>
                 </div>
+                <!-- Row2 -->
                 <div class="row">
                     <div class="col align-self-start">
                         Username:
                     </div>
-                    <div class="col align-self-end">
+                    <div class="col align-self-end" id="uname">
                         {{ username }}
                     </div>
                 </div>
+                <!-- Row3 -->
                 <div class="row">
                     <div class="col align-self-start">
                         Email:
                     </div>
-                    <div class="col align-self-end">
+                    <div class="col align-self-end" id="email">
                         {{ email }}
                     </div>
                 </div>
+                <!-- Row4 -->
                 <div class="row">
                     <div class="col align-self-start">
                         Instructor status:
                     </div>
-                    <div class="col align-self-end">
+                    <div class="col align-self-end" id="ins">
                         {{ instructor }}
                     </div>
                 </div>
+                <!-- Row5 -->
                 <div class="row">
                     <div class="col align-self-start">
                         Courses:
