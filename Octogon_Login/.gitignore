@@ -4,3 +4,6 @@
 node_modules
 dist
 .cache
+.pyc
+.sqlite3
+__pycache__/

@@ -1,13 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
 <!--Code Starts Here-->
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
 		<form action="#" id="form" method="POST">
-      {% csrf_token %}
-
       <h1>Create Account</h1>
 			<div class="social-container">
         <ul>
@@ -18,30 +15,44 @@
       </div>
 			<span>or use your email for registration</span>
 
+      {% csrf_token %}
       <div class="form-control">
-        <input type="text" id="username" placeholder="Name" />
+        {{ register.username }}
       </div>
 
       <div class="form-control">
-        <input type="email" id="email" placeholder="Email" />
+        {{ register.email }}
       </div>
 
       <div class="form-control">
-        <input type="password" id="password" placeholder="Password" />
+        {{ register.password1 }}
       </div>
 
       <div class="form-control">
-        <input type="password" id="password2" placeholder="Confirm Password" />
+        {{ register.password2 }}
       </div>
-
 
       <button type="submit" class="recvButton" onclick="checkInputsSignUp()">Sign Up</button>
 		</form>
-	</div>
+    <script>
+      //Query All input fields
+      var form_fields = document.getElementsByTagName('input')
+      form_fields[1].placeholder='Username';
+      form_fields[2].placeholder='Email';
+      form_fields[3].placeholder='Password';
+      form_fields[4].placeholder='Confirm Password';
 
+      for (var field in form_fields){
+      form_fields[field].className += ' form-control';
+      }
+    </script>
+	</div>
 	<div class="form-container sign-in-container">
 		<form action="#" id="form" method="POST">
-      {% csrf_token %}
+
+      {% for message in messages %}
+      <p>{{message}}</p>
+      {% endfor %}
 
       <h1>Sign in</h1>
 			<div class="social-container">
@@ -53,19 +64,23 @@
 			</div>
 			<span>or use your account</span>
 
+      {% csrf_token %}
+
 			<div class="form-control">
-        <input type="email" id="email" placeholder="Email" />
+        <input name="username" type="username" id="username" placeholder="Username" />
       </div>
 
       <div class="form-control">
-        <input type="password" id="password" placeholder="Password" />
+        <input name="password" type="password" id="password" placeholder="Password" />
       </div>
 
-			<button type="submit" class="recvButton">Sign In</button>
+      <input type="hidden" name="button-name" id="button-name" value="" />
+			<button type="submit" class="recvButton" id="signIn-action">Sign In</button>
 
       <a class="recvButton" href=" {% url 'password_reset' %} ">Forgot your password?</a>
 
 		</form>
+
 	</div>
 	<div class="overlay-container">
 		<div class="overlay">
@@ -77,8 +92,10 @@
 			<div class="overlay-panel overlay-right">
 				<h1>Don't Have an Account?</h1>
 				<p>Enter your personal details and start your journey with us!</p>
-				<button class="ghost" id="signUp">Sign Up</button>
-			</div>
+
+				<button class="ghost" id="signUp" >Sign Up</button>
+
+      </div>
 		</div>
 	</div>
 </div>
