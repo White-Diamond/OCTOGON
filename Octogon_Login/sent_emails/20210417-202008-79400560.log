@@ -1,0 +1,25 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Password reset on 127.0.0.1:8000
+From: webmaster@localhost
+To: rkline2@umbc.edu
+Date: Sun, 18 Apr 2021 00:20:08 -0000
+Message-ID: <161870520810.4224.274786462290061069@LAPTOP-0I08LBDE>
+
+
+You're receiving this email because you requested a password reset for your user account at 127.0.0.1:8000.
+
+Please go to the following page and choose a new password:
+
+http://127.0.0.1:8000/accounts/reset/Mw/al9n5k-de6f49d27b39d992f14bcb05ebe17aff/
+
+Your username, in case you’ve forgotten: rooklyn_kline
+
+Thanks for using our site!
+
+The 127.0.0.1:8000 team
+
+
+
+-------------------------------------------------------------------------------

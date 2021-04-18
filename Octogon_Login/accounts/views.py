@@ -1,11 +1,13 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.shortcuts import render, redirect
 
-from django.contrib.auth import authenticate, login, logout   # login info
+from django.contrib.auth import authenticate, login  # login info
 
 from django.contrib import messages # success message
+
+from datetime import datetime # date display for homepage
 
 from .forms import CreateUserForm
 
@@ -35,7 +37,7 @@ def loginPage(request):
     # valid user
     if user is not None:
       login(request, user)
-      return redirect("base")
+      return redirect("home") # url may change over time
     else:
       messages.info(request, "Username or Password is incorrect")
   return render(request, 'registration/login.html', context)
@@ -46,8 +48,18 @@ def LoginSignUpFunction(request):
 
     if signin_button == 'login_check':
       ##Carry out appropriate login function
-      loginPage(request=request)
+      context = {}
 
+      if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        # valid user
+        if user is not None:
+          login(request, user)
+          return redirect("home") # url may change over time
+        else:
+          messages.info(request, "Username or Password is incorrect")
     else:
       ##Carry out appropriate register function
       signup(request=request)
@@ -59,14 +71,12 @@ def LoginSignUpFunction(request):
 
   return render(request, "registration/login.html", context)
 
-
-# def logoutUser(request):
-#   context = {}
-#   return render(request, '', context)
-
-
 def base(request):
   return render(request, 'base.html')
 
 def pswrd(request):
   return render(request, 'registration/password_reset_form.html')
+
+def getDate(request):
+  datetime.now().strftime("%d-%m-%Y")
+  return render(request, 'home.html')

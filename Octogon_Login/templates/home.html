@@ -1,14 +1,181 @@
-{% extends 'base.html' %}
-
-{% block title %}Home{% endblock %}
-
+﻿{% extends 'base.html' %}
 {% block content %}
-{% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <p><a href="{% url 'logout' %}">Log Out</a></p>
-  <p><a href="{% url 'password_reset' %}">Reset Password</a></p>
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">Log In</a>
-{% endif %}
+{% load static %}
+  <head>
+  <title>Octogon - Online Learning Social Platform</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href=" {% static 'home/css/open-iconic-bootstrap.min.css' %} ">
+  <link rel="stylesheet" href=" {% static 'home/css/animate.css' %} ">
+
+  <link rel="stylesheet" href=" {% static 'home/css/owl.carousel.min.css' %} ">
+  <link rel="stylesheet" href=" {% static 'home/css/owl.theme.default.min.css' %} ">
+  <link rel="stylesheet" href=" {% static 'home/css/magnific-popup.css' %} ">
+
+  <link rel="stylesheet" href=" {% static 'home/css/aos.css' %} ">
+
+  <link rel="stylesheet" href=" {% static 'home/css/ionicons.min.css' %} ">
+
+	<link rel="stylesheet" href=" {% static 'home/css/bootstrap-datetimepicker.min.css' %} ">
+	<link rel="stylesheet" href=" {% static 'home/css/nouislider.css' %} ">
+
+
+  <link rel="stylesheet" href=" {% static 'home/css/flaticon.css' %} ">
+  <link rel="stylesheet" href=" {% static 'home/css/icomoon.css' %} ">
+  <link rel="stylesheet" href=" {% static 'home/css/style.css' %} ">
+
+  </head>
+
+  <body onload="renderTime();">
+  <div class="main-section">
+		<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+
+	    <div class="container">
+	      <a class="navbar-brand" href="#">Welcome</a>
+
+	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+	        <span class="oi oi-menu"></span> Menu
+	      </button>
+
+	      <div class="collapse navbar-collapse" id="ftco-nav">
+	        <ul class="navbar-nav ml-auto">
+
+				<li class="nav-item d-flex dropdown">
+					<a class="nav-link d-flex align-items-center dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Profile
+					</a>
+					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+
+            {% if user.is_authenticated %}
+            <a class="dropdown-item" href="#">
+              Hi {{ user.username }}!
+            </a>
+
+            <a class="dropdown-item" href="{% url 'logout' %}">
+              Log Out
+            </a>
+
+            <div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" href="{% url 'password_reset' %}">
+              Reset Password
+            </a>
+
+            {% else %}
+            <a class="dropdown-item" href="{% url 'login' %}">
+              Sign In/Sign Up
+            </a>
+
+            <div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" href="{% url 'password_reset' %}">
+              Forgot Password?
+            </a>
+            {% endif %}
+					</div>
+				</li>
+
+				<!-- Additional Settings Toolbar -->
+				<!--
+				<li class="nav-item d-flex">
+					<a class="nav-link d-flex align-items-center" href="#">Settings</a>
+				</li>
+				-->
+
+	        </ul>
+	      </div>
+		  </div>
+	  </nav>
+    <!-- END nav -->
+  	<section class="hero-wrap first-info" style="background-image: url('{% static "home/images/bg_1.jpg"%}')"; data-stellar-background-ratio="0.5">
+  		<div class="overlay">
+  		<div class="container">
+  			<div class="row description align-items-center justify-content-center">
+  				<div class="col-md-8 text-center">
+            <!-- DISPLAY DATE HERE-->
+            <!--class="mb-5" -->
+            <h2 class="mb-5" id="clockDisplay"></h2>
+          </div>
+  			</div>
+  		</div>
+      </div>
+  	</section>
+
+  	<section class="ftco-section bg-light" id="cards">
+			<div class="container card-styles">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="card">
+							<div class="icon-wrap px-4 pt-4">
+								<div class="icon d-flex justify-content-center align-items-center bg-info rounded-circle">
+									<span class="ion-logo-ionic text-light"></span>
+								</div>
+							</div>
+						  <div class="card-body pb-5 px-4">
+
+						    <h5 class="card-title">Students Get Started</h5>
+						    <p class="card-text">With supporting text below as a natural lead-in to additional content. A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+						    <a href="#" class="btn btn-info">Go somewhere</a>
+						  </div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card">
+							<div class="icon-wrap px-4 pt-4">
+								<div class="icon d-flex justify-content-center align-items-center bg-success rounded-circle">
+									<span class="ion-logo-ionic text-light"></span>
+								</div>
+							</div>
+						  <div class="card-body pb-5 px-4">
+						    <h5 class="card-title"> TAs Get Started</h5>
+						    <p class="card-text">With supporting text below as a natural lead-in to additional content. A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+						    <a href="#" class="btn btn-success">Go somewhere</a>
+						  </div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card">
+							<div class="icon-wrap px-4 pt-4">
+								<div class="icon d-flex justify-content-center align-items-center bg-warning rounded-circle">
+									<span class="ion-logo-ionic text-light"></span>
+								</div>
+							</div>
+						  <div class="card-body pb-5 px-4">
+						    <h5 class="card-title">Professors Get Started</h5>
+						    <p class="card-text">With supporting text below as a natural lead-in to additional content. A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+						    <a href="#" class="btn btn-warning">Go somewhere</a>
+						  </div>
+						</div>
+					</div>
+				</div>
+			</div>
+	  </section>
+	  <!-- - - - - -end- - - - -  -->
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+  <script src=" {% static 'home/js/jquery.min.js' %} "></script>
+  <script src=" {% static 'home/js/jquery-migrate-3.0.1.min.js' %} "></script>
+  <script src=" {% static 'home/js/jquery.stellar.min.js' %} "></script>
+  <script src=" {% static 'home/js/aos.js' %} "></script>
+  <script src=" {% static 'home/js/main.js' %} "></script>
+  <script type="text/javascript" src=" {% static 'home/js/get_time.js' %} "></script>
+
+
+  <!--
+	<script src=" {% static 'home/js/owl.carousel.min.js' %} "></script>
+	<script src=" {% static 'home/js/jquery.magnific-popup.min.js' %} "></script>
+	<script src=" {% static 'home/js/moment-with-locales.min.js' %} "></script>
+	<script src=" {% static 'home/js/bootstrap-datetimepicker.min.js' %} "></script>
+	<script src=" {% static 'home/js/nouislider.min.js' %} "></script>
+	<script src=" {% static 'home/js/jquery.waypoints.min.js' %} "></script>
+	<script src=" {% static 'home/js/jquery.easing.1.3.js' %} "></script>
+	<script src=" {% static 'home/js/bootstrap.min.js' %} "></script>
+	<script src=" {% static 'home/js/popper.min.js' %} "></script>
+  -->
+  </body>
 {% endblock %}

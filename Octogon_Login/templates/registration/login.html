@@ -1,6 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <title>Sign In or Sign Up</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+
+  <link rel="manifest" href=" {% static 'site.webmanifest' %} ">
+
+  <!-- favicon.ico located in the root directory -->
+  <link rel="icon" href=" {% static 'favicon.ico' %} " type="image/x-icon" />
+  <link rel="shortcut icon" href=" {% static 'favicon.ico' %} " type="image/x-icon" />
+
+  <link rel="stylesheet" href=" {% static 'login/css/normalize.css' %} ">
+  <link rel="stylesheet" href=" {% static 'login/css/main.css' %} ">
+  <link rel="stylesheet" href=" {% static 'login/css/styles.css' %} ">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+  integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+  crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/b7e1ed973e.js" crossorigin="anonymous"></script>
+
+  <meta name="theme-color" content="#fafafa">
+
+  <!-- background -->
+  <style>
+    body {
+    background-color: #1f1815;
+		background-attachment: scroll;
+		background-image: url(" {% static 'login/img/bg.jpg' %} ");
+		background-position: top left;
+		background-repeat: no-repeat;
+		background-size: 100%;
+    }
+  </style>
+
+</head>
 <!--Code Starts Here-->
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
@@ -50,10 +92,6 @@
 	<div class="form-container sign-in-container">
 		<form action="#" id="form" method="POST">
 
-      {% for message in messages %}
-      <p>{{message}}</p>
-      {% endfor %}
-
       <h1>Sign in</h1>
 			<div class="social-container">
 				<ul>
@@ -90,9 +128,15 @@
 				<button class="ghost" id="signIn">Sign In</button>
 			</div>
 			<div class="overlay-panel overlay-right">
-				<h1>Don't Have an Account?</h1>
-				<p>Enter your personal details and start your journey with us!</p>
 
+        {% if messages|length > 0 %}
+        {% for message in messages %}
+          <h1>{{message}}</h1>
+        {% endfor %}
+        {% else %}
+          <h1>Don't Have an Account?</h1>
+        {% endif %}
+        <p>Enter your personal details and start your journey with us!</p>
 				<button class="ghost" id="signUp" >Sign Up</button>
 
       </div>
@@ -100,10 +144,9 @@
 	</div>
 </div>
 
-  {% load static %}
-  <script src=" {% static 'js/plugins.js' %} "></script>
-  <script src=" {% static 'js/button_action.js' %} "></script>
-  <script src=" {% static 'js/scripts.js' %} "></script>
+  <script src=" {% static 'login/js/plugins.js' %} "></script>
+  <script src=" {% static 'login/js/button_action.js' %} "></script>
+  <script src=" {% static 'login/js/scripts.js' %} "></script>
 
 {% endblock %}
 
