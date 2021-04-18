@@ -4,9 +4,9 @@ from django.views import generic
 from django.shortcuts import render, redirect
 
 from django.contrib.auth import authenticate, login  # login info
-
+from django.contrib.auth.decorators import login_required # login must be required to access view.
+                                                          #template: @login_required(login_url="") (place above a function)
 from django.contrib import messages # success message
-
 from datetime import datetime # date display for homepage
 
 from .forms import CreateUserForm
@@ -43,6 +43,9 @@ def loginPage(request):
   return render(request, 'registration/login.html', context)
 
 def LoginSignUpFunction(request):
+  if request.user.is_authenticated:
+    return redirect("home")
+
   if request.method == "POST":
     signin_button = request.POST.get('button-name', False)
 
@@ -76,7 +79,3 @@ def base(request):
 
 def pswrd(request):
   return render(request, 'registration/password_reset_form.html')
-
-def getDate(request):
-  datetime.now().strftime("%d-%m-%Y")
-  return render(request, 'home.html')
