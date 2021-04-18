@@ -6,10 +6,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login  # login info
 from django.contrib.auth.decorators import login_required # login must be required to access view.
                                                           #template: @login_required(login_url="") (place above a function)
+from django.contrib.auth.models import Group
 from django.contrib import messages # success message
 from datetime import datetime # date display for homepage
 
 from .forms import CreateUserForm
+from .decorators import unauthenticated_user, allowed_users # checks user authentication
 
 def signup(request):
   form = CreateUserForm()
@@ -18,9 +20,13 @@ def signup(request):
   if request.method == "POST":
     form = CreateUserForm(request.POST)
     if form.is_valid():
-      form.save()
-      user = form.cleaned_data.get('username')
-      messages.success(request, 'Account was created for ' + user)
+      user = form.save()
+      username = form.cleaned_data.get('username')
+
+      group = Group.objects.get(name='student')
+      user.groups.add(group)
+
+      messages.success(request, 'Account was created for ' + username)
       return redirect('login')
     else:
       messages.info(request, 'Account was not created')
@@ -42,10 +48,8 @@ def loginPage(request):
       messages.info(request, "Username or Password is incorrect")
   return render(request, 'registration/login.html', context)
 
+@unauthenticated_user
 def LoginSignUpFunction(request):
-  if request.user.is_authenticated:
-    return redirect("home")
-
   if request.method == "POST":
     signin_button = request.POST.get('button-name', False)
 
