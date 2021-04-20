@@ -5,7 +5,7 @@ def unauthenticated_user(view_func):
   def wrapper_func(request, *args, **kwargs):
       if request.user.is_authenticated:
         return redirect("home")
-    return view_func(request, *args, **kwargs)
+      return view_func(request, *args, **kwargs)
   return wrapper_func
 
 # function call ex: @allowed_users(allowed_roles=['admin', 'student'])
