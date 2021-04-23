@@ -1,14 +1,14 @@
 from django.db import models
 
 class Course(models.Model):
-    name_short = models.CharField(max_length=8)
-    name_long = models.CharField(max_length=100)
+    name_short = models.CharField(max_length=8, unique=True)
+    name_long = models.CharField(max_length=100, unique=True)
     description = models.TextField()
     def __str__(self):
         return self.name_short
 
 class User(models.Model):
-    username = models.CharField(max_length=30)
+    username = models.CharField(max_length=30, unique=True)
     email = models.CharField(max_length=100)
     password = models.CharField(max_length=100) #ENCRYPT THIS!!!!!!!!!!
     name_first = models.CharField(max_length=30)
