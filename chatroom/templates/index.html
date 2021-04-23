@@ -11,15 +11,6 @@
             height: 100%;
             width: 100%;
         }
-        .my-container{
-            border: 3px solid green;
-        }
-        .my-row{
-            border: 3px solid red;
-        }
-        .my-col{
-            border: 3px solid blue;
-        }
         .card-header{
             height: 50px;
         }
@@ -76,12 +67,38 @@
                             <span class="input-group-text bg-white border" id="inputGroup-sizing-sm">
                                 <i class="fas fa-search"></i>
                             </span>
-                            <input type="search" class="form-control" placeholder="Type to search..."/>
+                            <input type="search" class="form-control" placeholder="Type to search..." id="search-bar"/>
                         </div>
                     </div>
                     <div class="card-body overflow-scroll p-0" style="height: 1px;">
                         <div class="list-group list-group-flush" id="user-area">
-                            <!--Online users go here-->
+                            <!--Users go here-->
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <!-- Button toggle for modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal" id="modal-button">
+                            <i class="fas fa-user-plus"></i>
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="addUserModal" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Select a classmate to chat with</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="list-group" id="modal-classmate-area">
+                                            <!--Classmate names go here-->
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -92,7 +109,7 @@
                 <!--Chat card-->
                 <div class="card h-100 rounded-0">
                     <div class="card-header" id="recipient-area">
-                        <!--User name goes here-->
+                        <!--Recipient name goes here-->
                     </div>
                     <div class="card-body overflow-auto" style="height: 1px;" id="message-area">
                         <!--Messages go here-->
@@ -106,41 +123,60 @@
         </div>
     </div>
 
+    <!-- content -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
 
     {% csrf_token %}
     <script>
-        // constants and lists
-        const csrftoken = Cookies.get('csrftoken');
-        let recipient = {};
-        const sender = {
-            fullName: "Josh Bender",
-            username: "joshua.caleb.bender@gmail.com" // this is just the uuid of the current user
-        }
-        let userList = [
-            {
-                fullName: "Jacob Bender",
-                username: "jbender321@gmail.com"
-            },
-            {
-                fullName: "Ben Bender",
-                username: "ben.b@gmail.com"
-            }
-        ];
+        /*
+        ***********************************************************************
+        SECURITY TOKENS & CONSTANTS
+        ***********************************************************************
+        */
 
-        // cache DOM elements
+        const csrftoken = Cookies.get('csrftoken');
+
+        /*
+        ***********************************************************************
+        PRIVATE HELPER FUNCTIONS        
+        ***********************************************************************
+        */
+
+        function closest(elem, tagname){
+            do {
+                if (elem.tagName === tagname) return elem;
+                elem = elem.parentNode;
+            } while (elem);
+        }
+
+
+        /*
+        ***********************************************************************
+        CACHED DOM ELEMNTS
+        ***********************************************************************
+        */
+
         let userArea_div = document.getElementById("user-area");
         let recipientArea_div = document.getElementById("recipient-area");
         let messageArea_div = document.getElementById("message-area");
         let textSubmitArea_div = document.getElementById("text-submit");
+        let modalClassmateArea_div = document.getElementById("modal-classmate-area");
+        let modal_btn = document.getElementById("modal-button");
+        let searchBar_input = document.getElementById("search-bar");
 
-        // Dynamic HTML templatess
+        /*
+        ***********************************************************************
+        DYNAMIC HTML ELEMENTS
+        ***********************************************************************
+        */
+
         let createUserElem = function(user, count){
             return `<button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
-                        <span>
+                        <span class="text-truncate">
                             <i class="fas fa-user-circle me-2"></i>
-                            <span>${user.fullName}</span>
+                            <span>${user}</span>
                         </span>
                         <span class="badge bg-primary rounded-pill">${count}</span>
                     </button>`;
@@ -156,36 +192,158 @@
             return `<p class="chat-bubble sent text-wrap">${message}</p>
                     <div class="separator"></div>`;
         } 
+        let createModalClassmateElem = function(classmate){
+            return `<button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="modal">${classmate}</button>`;
+        } 
 
-        function updateUserAreaDiv(){
-            // create all HTML first
-            for(let i = 0; i < userList.length; i++){
-                let user = userList[i];
-                let elem = createUserElem(user, 0)
-                userArea_div.innerHTML += elem;
-            }
+        /*
+        ***********************************************************************
+        INIT FUNCTIONS
+        ***********************************************************************
+        */
 
-            // assign event listeners to each user button
-            let buttons = userArea_div.children;
-            for(let i = 0; i < buttons.length; i++){
-                let button = buttons[i];
-                button.addEventListener('click', updateRecipientAreaDiv.bind(this, userList[i]), false);
-            }
+        function getActiveUser(){
 
-            updateRecipientAreaDiv(userList[0]);
+             /*
+              * Right now this is just dummy data but in the future
+              * this information should be retrieved from local or session storage
+              */
+
+            let email = prompt("Enter your email: ");
+            return email;
         }
 
-        function updateRecipientAreaDiv(user){
-            let elem = createToElem(user.fullName);
+        function getClassmates(activeUser){
+
+             /*
+              * Right now this is just dummy data but in the future
+              * this information should be retrieved from the backend database
+              */
+             
+            let classmates = [
+                "jacob.bender@gmail.com",
+                "ben.bender@gmail.com",
+                "mark.smith@gmail.com",
+                "donny.lala@gmail.com",
+                "bill.bob@gmail.com",
+                "joe.mamma@gmail.com",
+                "gage.rims@gmail.com"
+            ];
+
+            // remove active user from list
+            classmates.splice(classmates.indexOf(activeUser), 1);
+
+            return classmates;
+        }
+
+        function getOtherUser(){
+            return ( recipientArea_div.children.length != 0 ) ? recipientArea_div.children[0].children[0].innerHTML : '';
+        }
+
+        /*
+        ***********************************************************************
+        ATTACH/CHAIN DYNAMIC HTML ELEMENTS TO DOM
+        ***********************************************************************
+        */
+
+        function attachMessageListToMessageDiv(messages){
+            // create HTML list
+            let htmlList = classmates.reduce( (htmlList, classmate)=> {
+                let elem = createModalClassmateElem(classmate, 0);
+                htmlList += elem;
+                return htmlList;
+            }, '');
+            // attach html list to modal div
+            modalClassmateArea_div.innerHTML = htmlList;
+        }
+
+        function attachClassmateListToModalDiv(classmates){
+            // create HTML list
+            let htmlList = classmates.reduce( (htmlList, classmate)=> {
+                let elem = createModalClassmateElem(classmate, 0);
+                htmlList += elem;
+                return htmlList;
+            }, '');
+            // attach html list to modal div
+            modalClassmateArea_div.innerHTML = htmlList;
+        }
+
+        function attachUserListToUserDiv(otherUsers){
+            // create HTML list
+            let htmlList = otherUsers.reduce( (htmlList, otherUser)=> {
+                let elem = createUserElem(otherUser, 0);
+                htmlList += elem;
+                return htmlList;
+            }, '');
+            // attach html list to modal div
+            userArea_div.innerHTML = htmlList;
+        }
+
+        function attachEmptyElemToMessageDiv(){
+            messageArea_div.innerHTML = '';
+        }
+
+        function attachRecipientElemToRecipientDiv(recipient){
+            // create HTML recipient element
+            let elem = createToElem(recipient);
             recipientArea_div.innerHTML = elem;
-
-            // set current recipient
-            recipient = user;
         }
 
-        async function send(message, recipient){
+        function chainSentMessageToMessageDiv(message){
+            // create HTML recipient element
+            let elem = createSentMessageElem(message);
+            messageArea_div.innerHTML += elem;
+        }
+
+        function chainRecievedMessageToMessageDiv(message){
+            // create HTML recipient element
+            let elem = createReceivedMessageElem(message);
+            messageArea_div.innerHTML += elem;
+        }
+
+        /*
+        ***********************************************************************
+        DATABASE CONNECTION FUNCTIONS
+        ***********************************************************************
+        */
+
+        async function getConversation(activeUser, otherUser){
+            // POST- update db
+            const request = {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest', 
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    from: activeUser,
+                    to: otherUser
+                })
+            };
+
+            const response = await fetch('retrieve_conversation/', request);
+            const jsonArray = await response.json();
+
+            // clear message area
+            attachEmptyElemToMessageDiv();
+
+            for(let i = 0; i < jsonArray.length; i++){
+                let messageObj = jsonArray[i];
+                if(messageObj.from_id === otherUser){
+                    chainRecievedMessageToMessageDiv(messageObj.message);
+                } else{
+                    chainSentMessageToMessageDiv(messageObj.message);
+                }
+            }
+
+            messageArea_div.scrollTop = messageArea_div.scrollHeight;
+        }
+
+        async function send(message, activeUser, otherUser){
             // udpate DOM
-            messageArea_div.innerHTML += createSentMessageElem(message);
+            chainSentMessageToMessageDiv(message);
 
             // POST- update db
             const request = {
@@ -198,66 +356,233 @@
                 },
                 body: JSON.stringify({
                     message: message,
-                    recipient: recipient,
-                    sender: sender
+                    from: activeUser,
+                    to: otherUser
                 })
             };
 
-            const response = await fetch('load/', request);
+            const response = await fetch('load_message/', request);
         }
 
-        async function poll(){
+        async function poll_active(activeUser, otherUser){
+
+            /*
+             * Only poll for unseen messages if a recipient has been
+             * chosen by the active user, otherwise don't send POST
+             * request
+             */
+
+            if (otherUser !== '') {
+                // POST- retrieve from db
+                const request = {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest', 
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        from: otherUser,
+                        to: activeUser
+                    })
+                };
+
+                // retrieve all unseen messages sent from other user to active user
+                const response = await fetch('retrieve_active_message/', request);
+                const jsonArray = await response.json();
+
+                // update DOM
+                for(let i = 0; i < jsonArray.length; i++){
+                    let message = jsonArray[i]['message'];
+                    chainRecievedMessageToMessageDiv(message);
+                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
+                }
+            } 
+        }
+
+        async function poll_inactive(activeUser, classmate, otherUsers, classmates){
+
+            /*
+             * Only poll for messages even if a recipient has not been
+             * chosen by the active user, otherwise don't send POST
+             * request
+             */
+
             // POST- retrieve from db
-            const request = {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest', 
-                    'X-CSRFToken': csrftoken
-                },
-                body: JSON.stringify({
-                    sender: sender,
-                    recipient: recipient
-                })
-            };
+            if(classmate !== ''){
+                // POST- retrieve from db
+                const request = {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest', 
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        from: classmate,
+                        to: activeUser
+                    })
+                };
 
-            const response = await fetch('retrieve/', request);
-            const jsonArray = await response.json();
+                const response = await fetch('retrieve_inactive_message/', request);
+                const jsonArray = await response.json();
 
-            // update DOM
-            for(let i = 0; i < jsonArray.length; i++){
-                let message = jsonArray[i]['message'];
-                messageArea_div.innerHTML += createReceivedMessageElem(message);
+                if(jsonArray.length !== 0){
+                    // remove user from classmates
+                    otherUsers.unshift(classmate);
+                    classmates.splice(classmates.indexOf(classmate), 1);
+                    // update DOM elements
+                    attachEmptyElemToMessageDiv();
+                    attachUserListToUserDiv(otherUsers);
+                    attachRecipientElemToRecipientDiv(classmate);
+                }
+
+                for(let i = 0; i < jsonArray.length; i++){
+                    let message = jsonArray[i]['message'];
+                    chainRecievedMessageToMessageDiv(message);
+                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
+                }
             }
+        }
 
-            // poll for new unseen messages
-            setTimeout(poll, 1000);
+        /*
+        ***********************************************************************
+        EVENTS        
+        ***********************************************************************
+        */
+
+        function modalButtonEvent(e, activeUser, classmates, otherUsers){
+            if (e.target === e.currentTarget) return;
+
+            // get index of target button
+            let buttons = e.currentTarget.children;
+            let index = Array.from(buttons).indexOf(e.target);
+
+            // put classmate into otherUsers and remove classmate from its list
+            otherUser = classmates[index];
+            otherUsers.push(classmates[index]);
+            classmates.splice(index, 1);
+
+            // update user area
+            getConversation(activeUser, otherUser);
+            attachUserListToUserDiv(otherUsers);
+            attachRecipientElemToRecipientDiv(otherUser);
+
+            e.stopPropagation();
+        }
+
+        function userButtonEvent(e, activeUser){
+            if (e.target === e.currentTarget) return;
+
+            // get button element from element that was clicked
+            let button = closest(e.target, 'BUTTON');                
+            let otherUser = button.children[0].children[1].innerHTML
+
+            // get cnversation
+            getConversation(activeUser, otherUser);
+
+            // update user recipient area
+            attachRecipientElemToRecipientDiv(otherUser);
+
+            e.stopPropagation();
+        }
+
+        function inputMessageEvent(e, activeUser, otherUser){
+            if(e.key === 'Enter'){
+                // prevent default page load on keypress
+                e.preventDefault();
+                // get the current message
+                let message = e.target.innerHTML;
+                // get the placeholder
+                let attr = textSubmitArea_div.getAttributeNode('placeholder');
+
+                /*
+                 * If a recipient has been selected than send them the message
+                 * otherwise tell the active user to select a recipient before
+                 * sending a message
+                 */
+
+                if (otherUser !== '') {
+                    send(message, activeUser, otherUser);
+                    attr.textContent = "Message...";
+                } else {
+                    attr.textContent = "You must select a user before sending a message...";
+                }
+
+                /*
+                 * Remove the message from the text area after it has been
+                 * sent and always keep most recent messages in focus by
+                 * scrolling to the bottom of the message area div
+                 */
+                
+                e.target.innerHTML = '';
+                messageArea_div.scrollTop = messageArea_div.scrollHeight;
+            }
+        }
+
+        function searchBarEvent(e, otherUsers, filteredUsers){
+            e.preventDefault();
+            let query = e.target.value;
+
+            /*
+             * Below we are using Fuse.js- a fuzzy search algorithm in order
+             * to properly implement the search functionality. The result of 
+             * the search algorithm is an array of values that match the give 
+             * search value in order of closest match
+             */
+
+            const fuse = new Fuse(otherUsers);
+            const result = fuse.search(query);
+            const filter = result.map( (o) => { return o.item; } );
+
+            if(query !== ''){
+                // show filtered search
+                attachUserListToUserDiv(filter);
+            } else{
+                // show full user list
+                attachUserListToUserDiv(otherUsers);
+            }
         }
 
         // attach event handlers
         function main(){
-            // load default page contents
-            updateUserAreaDiv();
+            // get active user and list of classmates
+            let activeUser = getActiveUser();
+            let classmates = getClassmates(activeUser);
+            let otherUsers = [];
 
-            // event handler for submit button
-            textSubmitArea_div.addEventListener('keypress', (e) => {
-                if(e.key === 'Enter'){
-                    e.preventDefault();
-                    let message = e.target.innerHTML;
-                    send(message, recipient);
-                    e.target.innerHTML = '';
-                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
-                }
-            });
+            // add-new-user button event
+            modal_btn.addEventListener('click', (e) => { attachClassmateListToModalDiv(classmates); }, false);
+            // modal button event
+            modalClassmateArea_div.addEventListener('click', (e) => { modalButtonEvent(e, activeUser, classmates, otherUsers); }, false);
+            // user button event
+            userArea_div.addEventListener('click', (e) => { userButtonEvent(e, activeUser); }, false);
+            // message input area event
+            textSubmitArea_div.addEventListener('keypress', (e) => { inputMessageEvent(e, activeUser, getOtherUser()); }, false);
+            // search bar event
+            searchBar_input.addEventListener('input', (e)=>{ searchBarEvent(e, otherUsers); }, false);
 
-            // poll for incoming messagess
-            poll(sender, recipient);
+            // poll
+            setInterval(() => {
+                poll_active(activeUser, getOtherUser());
+            }, 100);
+
+            // poll
+            setInterval(() => {
+                classmates.forEach( (classmate) => {
+                    poll_inactive(activeUser, classmate, otherUsers, classmates);
+                }); 
+            }, 400);
         }
 
         // run app
         main();
-    
     </script>
+
 </body>
 </html>
+
+
+
