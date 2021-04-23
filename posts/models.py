@@ -14,10 +14,12 @@ class Thread(models.Model):
 
 # This Object is for Posts contained in threads
 class Post(models.Model):
+    owning_thread_ID = models.IntegerField(default=0)
     # this allows posts to be identified based on the thread they are contained in
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)  # this should by default add post_set to Thread
     post_ID = models.IntegerField(default=0)
     user_ID = models.IntegerField(default=0)
+    username = models.CharField(max_length=30, default="Blank Username")
     post_date = models.DateTimeField(auto_now_add=True)
     main_text = models.TextField()
 

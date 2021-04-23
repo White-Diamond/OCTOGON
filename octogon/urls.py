@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('posts.urls')),
     path('', include("messageboard.urls")),
     path('', include("profilepage.urls")),
+    path('chatroom/', include('chatroom.urls')),
 ]

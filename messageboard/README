@@ -1,0 +1,19 @@
+## Description
+This app is the implementation of a messageboard for the webapp where a majority of communication will take place.
+
+## Testing
+Testing tests the ability to retreive data and make sure Posts can easily be associated with a certain 
+thread and vise vera. Also tests user's interaction with site to ensure they can make threads and posts.
+
+
+#### Requirements: 
+- python 3
+- Webdriver for python (GeckoDriver uses Firefox: https://github.com/mozilla/geckodriver/releases)
+- packages included in OCTOGON/requirments.txt
+
+If you don't have python3 installed, then please install it, create a virtual environment,
+and install all dependencies in the requirements.txt mentioned above.
+
+To run the tests in this folder use the command: python manage.py test
+
+This will run all tests across the project including the ones for this app.
