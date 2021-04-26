@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <title>Sign In or Sign Up</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+
+  <link rel="manifest" href=" {% static 'site.webmanifest' %} ">
+
+  <!-- favicon.ico located in the root directory -->
+  <link rel="icon" href=" {% static 'favicon.ico' %} " type="image/x-icon" />
+  <link rel="shortcut icon" href=" {% static 'favicon.ico' %} " type="image/x-icon" />
+
+  <link rel="stylesheet" href=" {% static 'login/css/normalize.css' %} ">
+  <link rel="stylesheet" href=" {% static 'login/css/main.css' %} ">
+  <link rel="stylesheet" href=" {% static 'login/css/styles.css' %} ">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+  integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+  crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/b7e1ed973e.js" crossorigin="anonymous"></script>
+
+  <meta name="theme-color" content="#fafafa">
+
+  <!-- background -->
+  <style>
+    body {
+    background-color: #1f1815;
+		background-attachment: scroll;
+		background-image: url(" {% static 'login/img/bg.jpg' %} ");
+		background-position: top left;
+		background-repeat: no-repeat;
+		background-size: 100%;
+    }
+  </style>
+
+</head>
+<!--Code Starts Here-->
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+		<form action="#" id="form" method="POST">
+      <h1>Create Account</h1>
+			<div class="social-container">
+        <ul>
+				<li><a href="#" class="social"><i class="fab fa-facebook-f"></i></a></li>
+				<li><a href="#" class="social"><i class="fab fa-google-plus-g"></i></a></li>
+				<li><a href="#" class="social"><i class="fab fa-linkedin-in"></i></a></li>
+        </ul>
+      </div>
+			<span>or use your email for registration</span>
+
+      {% csrf_token %}
+      <div class="form-control">
+        {{ register.username }}
+      </div>
+
+      <div class="form-control">
+        {{ register.email }}
+      </div>
+
+      <div class="form-control">
+        {{ register.password1 }}
+      </div>
+
+      <div class="form-control">
+        {{ register.password2 }}
+      </div>
+
+      <button type="submit" class="recvButton" onclick="checkInputsSignUp()">Sign Up</button>
+		</form>
+    <script>
+      //Query All input fields
+      var form_fields = document.getElementsByTagName('input')
+      form_fields[1].placeholder='Username';
+      form_fields[2].placeholder='Email';
+      form_fields[3].placeholder='Password';
+      form_fields[4].placeholder='Confirm Password';
+
+      for (var field in form_fields){
+      form_fields[field].className += ' form-control';
+      }
+    </script>
+	</div>
+	<div class="form-container sign-in-container">
+		<form action="#" id="form" method="POST">
+
+      <h1>Sign in</h1>
+			<div class="social-container">
+				<ul>
+          <li><a href="#" class="social"><i class="fab fa-facebook-f"></i></a></li>
+          <li><a href="#" class="social"><i class="fab fa-google-plus-g"></i></a></li>
+          <li><a href="#" class="social"><i class="fab fa-linkedin-in"></i></a></li>
+        </ul>
+			</div>
+			<span>or use your account</span>
+
+      {% csrf_token %}
+
+			<div class="form-control">
+        <input name="username" type="username" id="username" placeholder="Username" />
+      </div>
+
+      <div class="form-control">
+        <input name="password" type="password" id="password" placeholder="Password" />
+      </div>
+
+      <input type="hidden" name="button-name" id="button-name" value="" />
+			<button type="submit" class="recvButton" id="signIn-action">Sign In</button>
+
+      <a class="recvButton" href=" {% url 'password_reset' %} ">Forgot your password?</a>
+
+		</form>
+
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Wait... I Already Have an Account</h1>
+				<p>Please sign-in with your current account to access your personal info</p>
+				<button class="ghost" id="signIn">Sign In</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+
+        {% if messages|length > 0 %}
+        {% for message in messages %}
+          <h1>{{message}}</h1>
+        {% endfor %}
+        {% else %}
+          <h1>Don't Have an Account?</h1>
+        {% endif %}
+        <p>Enter your personal details and start your journey with us!</p>
+				<button class="ghost" id="signUp" >Sign Up</button>
+
+      </div>
+		</div>
+	</div>
+</div>
+
+  <script src=" {% static 'login/js/plugins.js' %} "></script>
+  <script src=" {% static 'login/js/button_action.js' %} "></script>
+  <script src=" {% static 'login/js/scripts.js' %} "></script>
+
+{% endblock %}
+
+  <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+  <!--
+  <script>
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+    ga('create', 'UA-XXXXX-Y', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
+  </script>
+  <script src="https://www.google-analytics.com/analytics.js" async></script>
+  -->
+
