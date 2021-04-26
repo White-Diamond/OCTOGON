@@ -1,0 +1,4 @@
+
+*.sqlite3
+*.pyc
+user_profile_db/migrations/0001_initial.py
