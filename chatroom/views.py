@@ -29,10 +29,10 @@ def retrieve_conversation(request):
 
         return HttpResponse(jsonMessages)
 
-    jsonMessages = json.dumps({})
+    jsonMessages = json.dumps([])
     return HttpResponse(jsonMessages)
 
-def retrieve_active_message(request):
+def retrieve_message(request):
     # save messages in request.body
     data = json.loads(request.body)
     recipient_id = data['to']
@@ -52,26 +52,6 @@ def retrieve_active_message(request):
         return HttpResponse(jsonMessages)
 
     jsonMessages = json.dumps({})
-    return HttpResponse(jsonMessages)
-
-def retrieve_inactive_message(request):
-    # save messages in request.body
-    data = json.loads(request.body)
-    recipient_id = data['to']
-    sender_id = data['from']
-
-    # Message exists
-    chat = Message.objects.filter(to_id=recipient_id, from_id=sender_id).values('message', 'from_id')
-
-    if(chat.exists()):
-        # convert from QuerySet to JSON string
-        jsonMessages = json.dumps(list(chat))
-        # since messages have now been seen update seen to true=1
-        chat.update(seen=1)
-
-        return HttpResponse(jsonMessages)
-
-    jsonMessages = json.dumps([])
     return HttpResponse(jsonMessages)
 
 def load_message(request):

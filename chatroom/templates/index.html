@@ -206,10 +206,10 @@
 
              /*
               * Right now this is just dummy data but in the future
-              * this information should be retrieved from local or session storage
+              * this information should be retrieved from the student model
               */
 
-            let email = prompt("Enter your email: ");
+            let email = prompt("Enter your name: ");
             return email;
         }
 
@@ -221,13 +221,13 @@
               */
              
             let classmates = [
-                "jacob.bender@gmail.com",
-                "ben.bender@gmail.com",
-                "mark.smith@gmail.com",
-                "donny.lala@gmail.com",
-                "bill.bob@gmail.com",
-                "joe.mamma@gmail.com",
-                "gage.rims@gmail.com"
+                "jacob",
+                "ben",
+                "mark",
+                "donny",
+                "bill",
+                "joe",
+                "gage"
             ];
 
             // remove active user from list
@@ -246,15 +246,19 @@
         ***********************************************************************
         */
 
-        function attachMessageListToMessageDiv(messages){
+        function attachMessageListToMessageDiv(messages, user){
             // create HTML list
-            let htmlList = classmates.reduce( (htmlList, classmate)=> {
-                let elem = createModalClassmateElem(classmate, 0);
-                htmlList += elem;
+            let htmlList = messages.reduce( (htmlList, messageObj)=> {
+                if(messageObj.from_id === user){
+                    htmlList += createReceivedMessageElem(messageObj.message);
+                } else{
+                    htmlList += createSentMessageElem(messageObj.message);
+                }
                 return htmlList;
             }, '');
             // attach html list to modal div
-            modalClassmateArea_div.innerHTML = htmlList;
+            messageArea_div.innerHTML = htmlList;
+            messageArea_div.scrollTop = messageArea_div.scrollHeight;
         }
 
         function attachClassmateListToModalDiv(classmates){
@@ -293,12 +297,14 @@
             // create HTML recipient element
             let elem = createSentMessageElem(message);
             messageArea_div.innerHTML += elem;
+            messageArea_div.scrollTop = messageArea_div.scrollHeight;
         }
 
         function chainRecievedMessageToMessageDiv(message){
             // create HTML recipient element
             let elem = createReceivedMessageElem(message);
             messageArea_div.innerHTML += elem;
+            messageArea_div.scrollTop = messageArea_div.scrollHeight;
         }
 
         /*
@@ -307,7 +313,7 @@
         ***********************************************************************
         */
 
-        async function getConversation(activeUser, otherUser){
+        async function fetch_conversation(activeUser, otherUser){
             // POST- update db
             const request = {
                 method: 'POST',
@@ -324,21 +330,9 @@
             };
 
             const response = await fetch('retrieve_conversation/', request);
-            const jsonArray = await response.json();
+            const messageList = await response.json();
 
-            // clear message area
-            attachEmptyElemToMessageDiv();
-
-            for(let i = 0; i < jsonArray.length; i++){
-                let messageObj = jsonArray[i];
-                if(messageObj.from_id === otherUser){
-                    chainRecievedMessageToMessageDiv(messageObj.message);
-                } else{
-                    chainSentMessageToMessageDiv(messageObj.message);
-                }
-            }
-
-            messageArea_div.scrollTop = messageArea_div.scrollHeight;
+            return messageList;
         }
 
         async function send(message, activeUser, otherUser){
@@ -364,7 +358,7 @@
             const response = await fetch('load_message/', request);
         }
 
-        async function poll_active(activeUser, otherUser){
+        async function poll_message(activeUser, otherUser){
 
             /*
              * Only poll for unseen messages if a recipient has been
@@ -389,19 +383,18 @@
                 };
 
                 // retrieve all unseen messages sent from other user to active user
-                const response = await fetch('retrieve_active_message/', request);
+                const response = await fetch('retrieve_message/', request);
                 const jsonArray = await response.json();
 
                 // update DOM
                 for(let i = 0; i < jsonArray.length; i++){
                     let message = jsonArray[i]['message'];
                     chainRecievedMessageToMessageDiv(message);
-                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
                 }
             } 
         }
 
-        async function poll_inactive(activeUser, classmate, otherUsers, classmates){
+        async function poll_conversation(activeUser, classmate, otherUsers, classmates){
 
             /*
              * Only poll for messages even if a recipient has not been
@@ -412,37 +405,17 @@
             // POST- retrieve from db
             if(classmate !== ''){
                 // POST- retrieve from db
-                const request = {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest', 
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify({
-                        from: classmate,
-                        to: activeUser
-                    })
-                };
+                const messageList = await fetch_conversation(activeUser, classmate);
 
-                const response = await fetch('retrieve_inactive_message/', request);
-                const jsonArray = await response.json();
-
-                if(jsonArray.length !== 0){
-                    // remove user from classmates
+                if(messageList.length !== 0){
+                    // update otherUsers list and remove user from classmates
                     otherUsers.unshift(classmate);
                     classmates.splice(classmates.indexOf(classmate), 1);
                     // update DOM elements
                     attachEmptyElemToMessageDiv();
                     attachUserListToUserDiv(otherUsers);
                     attachRecipientElemToRecipientDiv(classmate);
-                }
-
-                for(let i = 0; i < jsonArray.length; i++){
-                    let message = jsonArray[i]['message'];
-                    chainRecievedMessageToMessageDiv(message);
-                    messageArea_div.scrollTop = messageArea_div.scrollHeight;
+                    attachMessageListToMessageDiv(messageList, classmate);
                 }
             }
         }
@@ -453,7 +426,7 @@
         ***********************************************************************
         */
 
-        function modalButtonEvent(e, activeUser, classmates, otherUsers){
+        async function modalButtonEvent(e, activeUser, classmates, otherUsers){
             if (e.target === e.currentTarget) return;
 
             // get index of target button
@@ -465,15 +438,18 @@
             otherUsers.push(classmates[index]);
             classmates.splice(index, 1);
 
+            // get cnversation
+            const messageList = await fetch_conversation(activeUser, otherUser);
+
             // update user area
-            getConversation(activeUser, otherUser);
             attachUserListToUserDiv(otherUsers);
             attachRecipientElemToRecipientDiv(otherUser);
+            attachMessageListToMessageDiv(messageList, otherUser);
 
             e.stopPropagation();
         }
 
-        function userButtonEvent(e, activeUser){
+        async function userButtonEvent(e, activeUser){
             if (e.target === e.currentTarget) return;
 
             // get button element from element that was clicked
@@ -481,10 +457,11 @@
             let otherUser = button.children[0].children[1].innerHTML
 
             // get cnversation
-            getConversation(activeUser, otherUser);
+            const messageList = await fetch_conversation(activeUser, otherUser);
 
             // update user recipient area
             attachRecipientElemToRecipientDiv(otherUser);
+            attachMessageListToMessageDiv(messageList, otherUser);
 
             e.stopPropagation();
         }
@@ -564,18 +541,24 @@
             // search bar event
             searchBar_input.addEventListener('input', (e)=>{ searchBarEvent(e, otherUsers); }, false);
 
-            // poll
+            // poll for new messages (in-focus)
             setInterval(() => {
-                poll_active(activeUser, getOtherUser());
+                poll_message(activeUser, getOtherUser());
             }, 100);
 
-            // poll
+            // poll for new conversations
             setInterval(() => {
                 classmates.forEach( (classmate) => {
-                    poll_inactive(activeUser, classmate, otherUsers, classmates);
+                    poll_conversation(activeUser, classmate, otherUsers, classmates);
                 }); 
             }, 400);
+
+            // poll for new messages (out-of-focus)
         }
+
+        // 1.) fix some comments in DB connection functions
+        // 2.) create a helper function for post requests
+        // 3.) create x button for messages (this is just an interface- shouldn't delete anything from the database, just visual)
 
         // run app
         main();
