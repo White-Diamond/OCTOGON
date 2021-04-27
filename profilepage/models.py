@@ -9,6 +9,10 @@ class Course(models.Model):
     def __str__(self):
         return self.name_short
 
+# This user model needs to extend the default user model via a 
+# one to one relationship. See the site pasted below for further reference:
+# https://stackoverflow.com/questions/44109/extending-the-user-model-with-custom-fields-in-django
+
 class User(models.Model):
     BOOL_VALS = ((True, 'Yes'), (False, 'No'))
     username = models.CharField(max_length=30)

@@ -7,8 +7,8 @@ from messageboard.views import userMakesThread
 from messageboard.views import userMakesPost
 
 urlpatterns = [
+     path('', mainBoard),
      path('basicRes/', basicResponse),
-     path('messageboard/', mainBoard),
      path('messageboard/thread/<int:thrdID>/', getThreadPosts),
      path('threadcreate/', userMakesThread),
      path('newpost/<int:thrdID>', userMakesPost),
