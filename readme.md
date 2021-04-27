@@ -12,7 +12,6 @@ demonstration on each test class.
 3.) Test class 2: python3 ./manage.py runserver 
                   python3 ./manage.py test chatroom.tests.MessageAPITestCase
 
-
 Note: Notice that on the 2nd test the server must be running!
 
 Ryan’s front-end selenium tests work, but only if a user with the username "test" is 
