@@ -4,7 +4,7 @@ from django.http import JsonResponse
 
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from django.contrib.sites.models import Site
+#from django.contrib.sites.models import Site
 # Import "from post.models" all the models from the threads and posts
 # in Ryan's message & post database branch
 from posts.models import Thread
