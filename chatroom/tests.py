@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Message
+from .models import Message, UserList
 import json
 
 class MessageTestCase(TestCase):

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.http import HttpResponse
-from .models import Message
+from .models import Message, UserList
 import json
 
 # Create your views here.
@@ -20,7 +20,7 @@ def retrieve_conversation(request):
 
     if(chat1.exists() or chat2.exists()):
         # get conversation
-        conversation = chat1.union(chat2).order_by('created_at').values('message', 'to_id', 'from_id')
+        conversation = chat1.union(chat2).order_by('created_at').values('message', 'to_id', 'from_id', 'seen')
         # convert from QuerySet to JSON string
         jsonMessages = json.dumps(list(conversation))
         # since messages have now been seen update seen to true=1
@@ -54,16 +54,41 @@ def retrieve_message(request):
     jsonMessages = json.dumps({})
     return HttpResponse(jsonMessages)
 
+def retrieve_user_list(request):
+    # save messages in request.body
+    data = json.loads(request.body)
+    activeUser = data['activeUser']
+
+    # Message exists
+    userList = UserList.objects.filter(active_user=activeUser).values('other_user')
+
+    if(userList.exists()):
+        # convert from QuerySet to JSON string
+        jsonList = json.dumps(list(userList))
+        return HttpResponse(jsonList)
+
+    jsonList = json.dumps([])
+    return HttpResponse(jsonList)
+
+def load_user_list(request):
+    # save user list in request.body
+    data = json.loads(request.body)
+    activeUser = data['activeUser']
+    otherUsers = data['otherUsers']
+
+    # add message to Message model
+    UserList.objects.filter(active_user=activeUser).delete()
+    for user in otherUsers:
+        UserList.objects.create(active_user=activeUser, other_user=user)
+
+    return HttpResponse("OK")
+
 def load_message(request):
     # save messages in request.body
     data = json.loads(request.body)
     message = data['message']
     recipient_id = data['to']
     sender_id = data['from']
-
-    print(message)
-    print(recipient_id)
-    print(sender_id)
 
     # add message to Message model
     newMessage = Message()

@@ -44,6 +44,12 @@
             color: #636c72;
             display: block; /* For Firefox */
         }
+        .my-x-button{
+            display: none;
+        }
+        .my-user-button:hover .my-x-button{
+            display: block;
+        }
     </style>
     <title>Document</title>
 </head>
@@ -113,6 +119,7 @@
                     </div>
                     <div class="card-body overflow-auto" style="height: 1px;" id="message-area">
                         <!--Messages go here-->
+                        <h1>Welcome</h1>
                     </div>
                     <div class="card-footer">
                         <div id="text-submit" class="form-control message-box" contenteditable="true" placeholder="Message..."></div>
@@ -173,12 +180,12 @@
         */
 
         let createUserElem = function(user, count){
-            return `<button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center">
+            return `<button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center my-user-button">
                         <span class="text-truncate">
                             <i class="fas fa-user-circle me-2"></i>
                             <span>${user}</span>
                         </span>
-                        <span class="badge bg-primary rounded-pill">${count}</span>
+                        <span type="span-close-button" class="btn-close my-x-button"></span>
                     </button>`;
         }
         let createToElem = function(to){
@@ -234,6 +241,17 @@
             classmates.splice(classmates.indexOf(activeUser), 1);
 
             return classmates;
+        }
+
+        async function getUserList(activeUser, classmates){
+            const otherUsers = await fetch_user_list(activeUser);
+            for(let i = 0; i <= otherUsers.length; i++){
+                let otherUser = otherUsers[i];
+                if(classmates.includes(otherUser)){
+                    classmates.splice(classmates.indexOf(otherUser), 1);
+                }
+            }
+            return otherUsers;
         }
 
         function getOtherUser(){
@@ -335,7 +353,48 @@
             return messageList;
         }
 
-        async function send(message, activeUser, otherUser){
+        async function fetch_user_list(activeUser){
+            // POST- update db
+            const request = {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest', 
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    activeUser
+                })
+            };
+
+            const response = await fetch('retrieve_user_list/', request);
+            const jsonArray = await response.json();
+            const userList = jsonArray.map( obj => obj.other_user );
+
+            return userList;
+        }
+
+        async function send_user_list(activeUser, otherUsers){
+            // POST- update db
+            const request = {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest', 
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    activeUser,
+                    otherUsers
+                })
+            };
+
+            const response = await fetch('load_user_list/', request);
+        }
+
+        async function send_message(message, activeUser, otherUser){
             // udpate DOM
             chainSentMessageToMessageDiv(message);
 
@@ -397,25 +456,25 @@
         async function poll_conversation(activeUser, classmate, otherUsers, classmates){
 
             /*
-             * Only poll for messages even if a recipient has not been
-             * chosen by the active user, otherwise don't send POST
-             * request
+             * poll for entire conversation between user who has
+             * not been selected from the classmates list. Once conversation
+             * has been polled, see if there are any messages that have not been
+             * seen and post the converstaion if so. Otherwise keep polling for new
+             * unseen messages
              */
 
             // POST- retrieve from db
-            if(classmate !== ''){
+            if(classmates.length !== 0){
                 // POST- retrieve from db
                 const messageList = await fetch_conversation(activeUser, classmate);
+                const unseenMessageList = messageList.filter( messageObj => messageObj.seen === false );
 
-                if(messageList.length !== 0){
+                if(unseenMessageList.length !== 0){
                     // update otherUsers list and remove user from classmates
                     otherUsers.unshift(classmate);
                     classmates.splice(classmates.indexOf(classmate), 1);
                     // update DOM elements
-                    attachEmptyElemToMessageDiv();
                     attachUserListToUserDiv(otherUsers);
-                    attachRecipientElemToRecipientDiv(classmate);
-                    attachMessageListToMessageDiv(messageList, classmate);
                 }
             }
         }
@@ -449,19 +508,38 @@
             e.stopPropagation();
         }
 
-        async function userButtonEvent(e, activeUser){
+        async function userButtonEvents(e, activeUser, otherUsers, classmates){
             if (e.target === e.currentTarget) return;
 
-            // get button element from element that was clicked
+            // get span button element from element that was clicked
             let button = closest(e.target, 'BUTTON');                
             let otherUser = button.children[0].children[1].innerHTML
 
-            // get cnversation
-            const messageList = await fetch_conversation(activeUser, otherUser);
+            // close button or user button
+            if(e.target.getAttribute('type') === "span-close-button"){
+                // update otherUsers and classmates list
+                let index = otherUsers.indexOf(otherUser);
+                otherUsers.splice(index, 1);
+                classmates.push(otherUser);
+                let nextOtherUser = otherUsers[index];
 
-            // update user recipient area
-            attachRecipientElemToRecipientDiv(otherUser);
-            attachMessageListToMessageDiv(messageList, otherUser);
+                // update DOM
+                attachUserListToUserDiv(otherUsers);
+                if(otherUsers.length === 0 || index >= otherUsers.length){
+                    attachEmptyElemToMessageDiv();
+                    attachRecipientElemToRecipientDiv('');
+                } else{
+                    attachRecipientElemToRecipientDiv(nextOtherUser);
+                    attachEmptyElemToMessageDiv();
+                    const messageList = await fetch_conversation(activeUser, nextOtherUser);
+                    attachMessageListToMessageDiv(messageList, nextOtherUser);
+                }
+            } else{
+                // update DOM
+                const messageList = await fetch_conversation(activeUser, otherUser);
+                attachRecipientElemToRecipientDiv(otherUser);
+                attachMessageListToMessageDiv(messageList, otherUser);
+            }
 
             e.stopPropagation();
         }
@@ -482,7 +560,7 @@
                  */
 
                 if (otherUser !== '') {
-                    send(message, activeUser, otherUser);
+                    send_message(message, activeUser, otherUser);
                     attr.textContent = "Message...";
                 } else {
                     attr.textContent = "You must select a user before sending a message...";
@@ -523,42 +601,56 @@
             }
         }
 
+        async function unloadEvent(e, activeUser, otherUsers){
+            send_user_list(activeUser, otherUsers);
+        }
+
         // attach event handlers
-        function main(){
-            // get active user and list of classmates
+        async function main(){
+            // get active user, classmates, and a list of other users
             let activeUser = getActiveUser();
             let classmates = getClassmates(activeUser);
-            let otherUsers = [];
+            let otherUsers = await getUserList(activeUser, classmates);
+
+            // default DOM updates
+            attachUserListToUserDiv(otherUsers);
 
             // add-new-user button event
             modal_btn.addEventListener('click', (e) => { attachClassmateListToModalDiv(classmates); }, false);
             // modal button event
             modalClassmateArea_div.addEventListener('click', (e) => { modalButtonEvent(e, activeUser, classmates, otherUsers); }, false);
             // user button event
-            userArea_div.addEventListener('click', (e) => { userButtonEvent(e, activeUser); }, false);
+            userArea_div.addEventListener('click', (e) => { userButtonEvents(e, activeUser, otherUsers, classmates); }, false);
             // message input area event
             textSubmitArea_div.addEventListener('keypress', (e) => { inputMessageEvent(e, activeUser, getOtherUser()); }, false);
             // search bar event
             searchBar_input.addEventListener('input', (e)=>{ searchBarEvent(e, otherUsers); }, false);
+            // close window event
+            window.addEventListener('beforeunload', (e)=>{ unloadEvent(e, activeUser, otherUsers); }, false);
 
-            // poll for new messages (in-focus)
+            // poll for new messages
             setInterval(() => {
                 poll_message(activeUser, getOtherUser());
             }, 100);
 
-            // poll for new conversations
+            // poll for new conversations from classmate list
             setInterval(() => {
                 classmates.forEach( (classmate) => {
                     poll_conversation(activeUser, classmate, otherUsers, classmates);
                 }); 
             }, 400);
 
-            // poll for new messages (out-of-focus)
+            //// poll for new conversations from otherUsers list
+            //setInterval(() => {
+            //    otherUsers.forEach( (otherUser) => {
+            //        poll_conversation(activeUser, classmate, otherUsers, classmates);
+            //    }); 
+            //}, 400);
         }
 
-        // 1.) fix some comments in DB connection functions
+        // 1.) create a new message dot feature- must work for messages sent from classmates in classmate list
+        //     and for new messages sent by the otherUsers list
         // 2.) create a helper function for post requests
-        // 3.) create x button for messages (this is just a UI manip- shouldn't delete anything from the database, just visual)
 
         // run app
         main();
