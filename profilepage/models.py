@@ -1,6 +1,7 @@
 from django.db import models
 from django import forms
 from django.db import models
+
 from django.contrib.auth.models import User
 
 class Course(models.Model):
@@ -20,7 +21,6 @@ class Profile(models.Model):
         primary_key=True,
     )
 
-    password = models.CharField(max_length=100) #ENCRYPT THIS!!!!!!!!!!
     name_first = models.CharField(max_length=30)
     name_last = models.CharField(max_length=30)
     is_instructor = models.BooleanField(default=False)
