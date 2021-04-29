@@ -17,59 +17,36 @@
     <!-- Card for Profile Information -->
     <div class="card align-item-center text-white bg-secondary" style="width: 21.5em;margin:0 auto;">
         <div class="card-body" style="background-color: .bg-secondary.bg-gradient;">
-            <!-- Organized table within card -->
-            <div class="container">
-                <!-- Row1 -->
-                <div class="row">
-                    <div class="col align-self-start">
-                        Name:
-                    </div>
-                    <div class="col align-self-end" id="name">
-                        {{ firstname }}
-                        {{ lastname }}
-                    </div>
-                </div>
-                <!-- Row2 -->
-                <div class="row">
-                    <div class="col align-self-start">
-                        Username:
-                    </div>
-                    <div class="col align-self-end" id="uname">
-                        {{ username }}
-                    </div>
-                </div>
-                <!-- Row3 -->
-                <div class="row">
-                    <div class="col align-self-start">
-                        Email:
-                    </div>
-                    <div class="col align-self-end" id="email">
-                        {{ email }}
-                    </div>
-                </div>
-                <!-- Row4 -->
-                <div class="row">
-                    <div class="col align-self-start">
-                        Instructor status:
-                    </div>
-                    <div class="col align-self-end" id="ins">
-                        {{ instructor }}
-                    </div>
-                </div>
-                <!-- Row5 -->
-                <div class="row">
-                    <div class="col align-self-start">
-                        Courses:
-                    </div>
-                    <div class="col align-self-end">
-                        <p>
-                            {% for cour in courses.all %}
-                                {{ cour.name_short}}<br/>
-                            {% endfor %}
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th scope="row">Name</th>
+                  <td scope="row" id="name">{{ firstname }} {{ lastname }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Username</th>
+                  <td id="uname">{{ username }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Email</th>
+                  <td id="email">{{ email }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Instructor status</th>
+                  <td id="ins">{{ instructor }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Courses</th>
+                  <td>
+                      <p>
+                          {% for cour in courses.all %}
+                            {{ cour.name_short}}<br/>
+                          {% endfor %}
+                      </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
         </div>
     </div>
     <!-- Optional JavaScript -->

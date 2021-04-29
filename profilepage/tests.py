@@ -1,19 +1,19 @@
 from django.test import TestCase
-from profilepage.models import Course, User
+from profilepage.models import Course, Profile
 from selenium import webdriver
 
 class UserTestCase(TestCase):
     def setUp(self):
-        User.objects.create(username="warsh1", email="example@example.com", password="password", name_first="James",
+        Profile.objects.create(username="warsh1", email="example@example.com", password="password", name_first="James",
                             name_last="Warshaw", is_instructor=False)
         Course.objects.create(name_short="CMSC 447", name_long="Software Engineering I")
-        User.objects.create(username="test", email="test@umbc.edu", password="password", name_first="John",
+        Profile.objects.create(username="test", email="test@umbc.edu", password="password", name_first="John",
                             name_last="Doe", is_instructor=False)
 
 
     def test_User(self):
         driver = webdriver.Chrome()
-        user = User.objects.get(username="warsh1")
+        user = Profile.objects.get(username="warsh1")
         user.save()
         course = Course.objects.get(name_short="CMSC 447")
         course.save()
@@ -26,9 +26,8 @@ class UserTestCase(TestCase):
         self.assertEqual(user.courses.get(id=1).name_long, "Software Engineering I")
 
         #Front-end tests using selenium
-        #Tests work if database entry is added automatically
-        #They fail for now because we have not set up a way to populate the profile database,
-        #Causing the page to crash
+        #Tests work if database entry is added manually
+        #They fail for now because we have not fully integrated the signup page and the profile page
         # driver.get("http://127.0.0.1:8000/")
         # self.assertEqual(driver.title, "User Information")
         # username = driver.find_element_by_id('uname').text
