@@ -42,3 +42,20 @@ class MessageAPITestCase(TestCase):
         # validate message JSON was sent to db
         message = Message.objects.get(message="json")
         self.assertEqual(message.message, "json")
+
+class UserListTestCase(TestCase):
+    def setUp(self):
+        # setup all necessary models for tests
+        UserList.objects.create(active_user='ben', other_user='mark', viewed=False)
+
+    def test_active_user(self):
+        # get user out
+        query = UserList.objects.get(active_user='ben')
+        # assert equality
+        self.assertEqual(query.active_user, "ben")
+
+    def test_other_user(self):
+        # get user out
+        query = UserList.objects.get(other_user='mark')
+        # assert equality
+        self.assertEqual(query.other_user, "mark")

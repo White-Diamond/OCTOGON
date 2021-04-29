@@ -1,4 +1,5 @@
 .DS_Store
+geckodriver.log
 db.sqlite3
 /.vscode
 **/__pycache__
