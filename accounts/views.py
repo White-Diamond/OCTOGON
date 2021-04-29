@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group
 from django.contrib import messages # success message
 from datetime import datetime # date display for homepage
 
-from .forms import CreateUserForm
+from .forms import CreateUserForm, UserProfileForm
 from .decorators import unauthenticated_user, allowed_users # checks user authentication
 
 def signup(request):
@@ -19,17 +19,25 @@ def signup(request):
 
   if request.method == "POST":
     form = CreateUserForm(request.POST)
+    # profile_form = UserProfileForm(request.POST)
+    # if form.is_valid() and profile_form.is_valid():
     if form.is_valid():
       user = form.save()
+
       username = form.cleaned_data.get('username')
 
       group = Group.objects.get(name='student')
       user.groups.add(group)
+      
+      #profile = profile_form.save(commit=False)
+      #profile.user = user
+      #profile.save()
 
       messages.success(request, 'Account was created for ' + username)
       return redirect('login')
     else:
       messages.info(request, 'Account was not created')
+      messages.error(request, form.errors)
 
   return render(request, 'registration/login.html', context)
 

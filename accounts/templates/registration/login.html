@@ -73,7 +73,7 @@
       <div class="form-control">
         {{ register.password2 }}
       </div>
-
+      
       <button type="submit" class="recvButton" onclick="checkInputsSignUp()">Sign Up</button>
 		</form>
     <script>
@@ -123,19 +123,26 @@
 	<div class="overlay-container">
 		<div class="overlay">
 			<div class="overlay-panel overlay-left">
-				<h1>Wait... I Already Have an Account</h1>
+        <h1>Wait... I Already Have an Account</h1>
 				<p>Please sign-in with your current account to access your personal info</p>
-				<button class="ghost" id="signIn">Sign In</button>
+        <button class="ghost" id="signIn">Sign In</button>
 			</div>
 			<div class="overlay-panel overlay-right">
 
-        {% if messages|length > 0 %}
-        {% for message in messages %}
-          <h1>{{message}}</h1>
-        {% endfor %}
+        {% if messages|length > 0 %} 
+      
+          {% for message in messages %}
+            {% if message.level_tag == 'success' %}
+              <h1>{{ message }}</h1>
+            {% else %}
+            <h3>{{message | striptags}}</h3>
+            {%endif%}
+          {% endfor %}
+          
         {% else %}
           <h1>Don't Have an Account?</h1>
         {% endif %}
+
         <p>Enter your personal details and start your journey with us!</p>
 				<button class="ghost" id="signUp" >Sign Up</button>
 
