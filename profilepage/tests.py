@@ -26,9 +26,8 @@ class UserTestCase(TestCase):
         self.assertEqual(user.courses.get(id=1).name_long, "Software Engineering I")
 
         #Front-end tests using selenium
-        #Tests work if database entry is added automatically
-        #They fail for now because we have not set up a way to populate the profile database,
-        #Causing the page to crash
+        #Tests work if database entry is added manually
+        #They fail for now because we have not fully integrated the signup page and the profile page
         # driver.get("http://127.0.0.1:8000/")
         # self.assertEqual(driver.title, "User Information")
         # username = driver.find_element_by_id('uname').text
