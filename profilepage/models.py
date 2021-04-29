@@ -10,7 +10,7 @@ class Course(models.Model):
     def __str__(self):
         return self.name_short
 
-# This user model needs to extend the default user model via a
+# This user model needs to extend the default user model via a OneToOne Field
 
 class Profile(models.Model):
 
