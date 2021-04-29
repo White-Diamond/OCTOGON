@@ -633,6 +633,12 @@
                 poll_message(activeUser, getOtherUser());
             }, 100);
 
+            /*
+             * the below pollings represent retrievals of new, unseen messages. Therefore, a blue
+             * dot to the left of the user name and profile icon should be displayed upon every
+             * new message.
+             */
+
             // poll for new conversations from classmate list
             setInterval(() => {
                 classmates.forEach( (classmate) => {
