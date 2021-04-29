@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django import forms
 
-from profilepage.models import UserProfile
+from profilepage.models import Profile
 
 class CreateUserForm(UserCreationForm):
   class Meta:
@@ -12,5 +12,5 @@ class CreateUserForm(UserCreationForm):
 
 class UserProfileForm(ModelForm):
   class Meta:
-    model = UserProfile
+    model = Profile
     fields = ['name_first', 'name_last', 'is_instructor', 'courses']

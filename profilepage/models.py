@@ -14,7 +14,7 @@ class Course(models.Model):
 # one to one relationship. See the site pasted below for further reference:
 # https://stackoverflow.com/questions/44109/extending-the-user-model-with-custom-fields-in-django
 
-class UserProfile(models.Model):
+class Profile(models.Model):
     BOOL_VALS = ((True, 'Yes'), (False, 'No'))
     
     user = models.OneToOneField(User, on_delete=models.CASCADE) #new

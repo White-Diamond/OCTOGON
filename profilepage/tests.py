@@ -1,19 +1,19 @@
 from django.test import TestCase
-from profilepage.models import Course, UserProfile
+from profilepage.models import Course, Profile
 from selenium import webdriver
 
 class UserTestCase(TestCase):
     def setUp(self):
-        UserProfile.objects.create(username="warsh1", email="example@example.com", password="password", name_first="James",
+        Profile.objects.create(username="warsh1", email="example@example.com", password="password", name_first="James",
                             name_last="Warshaw", is_instructor=False)
         Course.objects.create(name_short="CMSC 447", name_long="Software Engineering I")
-        UserProfile.objects.create(username="test", email="test@umbc.edu", password="password", name_first="John",
+        Profile.objects.create(username="test", email="test@umbc.edu", password="password", name_first="John",
                             name_last="Doe", is_instructor=False)
 
 
     def test_User(self):
         driver = webdriver.Chrome()
-        user = UserProfile.objects.get(username="warsh1")
+        user = Profile.objects.get(username="warsh1")
         user.save()
         course = Course.objects.get(name_short="CMSC 447")
         course.save()

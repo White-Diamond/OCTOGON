@@ -132,7 +132,11 @@
         {% if messages|length > 0 %} 
       
           {% for message in messages %}
-            <h3>{{message | striptags}}</h3>  
+            {% if message.level_tag == 'success' %}
+              <h1>{{ message }}</h1>
+            {% else %}
+            <h3>{{message | striptags}}</h3>
+            {%endif%}
           {% endfor %}
           
         {% else %}
