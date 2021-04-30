@@ -3,14 +3,32 @@
     {%load static %}
 <head>
 <link rel="stylesheet" href="{% static 'css/messageBoard.css' %}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="viewport" content="height=device-height, initial-scale=1.0">
 </head>
 <body>
+    <div class="container">
     <form id="threadForm" action="" method="POST">
+        <div class="form-group"></div>
         {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Submit">
+        <label for="topic_input_box">{{ form.threadTopic.label }}</label>
+        <textarea class="form-control" rows="1" cols="5" id="topic_input_box" name="threadTopic"></textarea>
+        <label for="post_input_box">{{ form.post_text.label }}</label>
+        <textarea class="form-control" rows="2" cols="5" id="post_input_box" name="post_text"></textarea>
+        <!--
+        <label for="post_input_box">{{ form.threadTopic.label }}</label>
+        <br>
+        <input id="threadTopic" type="text" class="form-control" contenteditable="true" placeholder="Topic...">
+        <label for="post_input_box">{{ form.post_text.label }}</label>
+        <br>
+        <textarea id="post_text" class="form-control message-box" contenteditable="true" placeholder="Post..."></textarea>
+        -->
+        <input type="submit" value="Submit" class="btn btn-primary" id="post_input_box">
+    </div>
     </form>
 </body>
 </html>

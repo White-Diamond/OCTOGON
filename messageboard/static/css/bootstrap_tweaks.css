@@ -1,0 +1,20 @@
+div#activeThread {
+    display:block;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+
+div#inactiveThread {
+    display:block;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+
+div#post_box {
+    /*white-space: nowrap;*/
+    word-wrap: break-word;
+    /*text-overflow: ellipsis; */
+    /*word-wrap: break-word;*/
+}
