@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<h1>Class Selection and removal</h1>
+
+<form action="{% url 'user_db:add_class' course.name_short %}" method="post">
+{% csrf_token %}
+<select id="courses" name="Add Courses">
+{% for i in Course.objects.all() %}
+	{% if current_user.profile.courses.filter(name_short=i.name_short).exists()==False %}
+		<option value="{{ i.name_short }}">{{ i.name_short }}</option>
+	{% endif %}
+{% endfor %}
+</select>
+<br><br>
+<input type="submit" value="Submit">
+</form>
+
+<form action="{% url 'user_db:remove_class' course.name_short %}" method="post">
+{%csrf_token %}
+<select id="remove" name="Remove Courses">
+{% for j in current_user.profile.courses.all() %}
+	<option value="{{ j.name_short }}">{{ j.name_short }}</option>
+{% endfor %}
+</select>
+<br><br>
+<input type="submit" value="Submit">
+</form>
+</html>

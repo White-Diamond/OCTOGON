@@ -20,7 +20,7 @@ class Profile(models.Model):
     is_instructor = models.BooleanField(default=False)
     courses = models.ManyToManyField(Course)
     def __str__(self):
-        return self.username
+        return self.user.username
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
