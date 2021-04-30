@@ -6,45 +6,74 @@
 of the stylesheet. When testing and doing frequent updates of the stylesheet it's annoying
 to have to clear the cached stylesheet manually. This can be taken out in production.-->
 <link rel="stylesheet" href="{% static 'css/messageBoard.css' %}?{% now "U" %}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="{% static 'css/bootstrap_tweaks.css' %}?{% now "U" %}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="viewport" content="height=device-height, initial-scale=1.0">
 </head>
 <body>
+    <!--
     <h1>
         Hello, {{userid}}!
     </h1>
-    <button onclick="gotoChatroom(this)">
-        Go to My Chatroom
-    </button>
-    <button onclick="gotoUserpage(this)">
-        View My Profile
-    </button>
+    -->
+    <div class="row">
+        <div class="col-1">
+            <div style="white-space:nowrap; overflow:hidden; font-size:16px; display:flex; align-items: center; justify-content: center;">
+                Hello, {{userid}}!
+            </div>
+        </div>
+        <div class="col-1">
+        <button style="width:100%" type="button" class="btn btn-primary" onclick="gotoChatroom(this)">
+            Go to My Chatroom
+        </button>
+        </div>
+        <div class="col-1">
+        <button style="width:100%" type="button" class="btn btn-primary" onclick="gotoUserpage(this)">
+            View My Profile
+        </button>
+        </div>
+    </div>
+
     <div class="board_title">OCTOGON</div>
 
-    <div class="make_thread_btn" onclick="threadcreate(this)">
-        Create New Thread
+    <div class="container-fluid">
+        <div class="col-xl-3">
+            <div style="width:100%;" type="button" class="btn btn-primary" onclick="threadcreate(this)">
+                Create New Thread
+            </div>
+        </div>
+    <div class="col-xl-9">
+
+    </div>
     </div>
 
     <!-- Frame which contains all thread and post related content -->
     <div class="baseframe">
         
         <!-- Left side of webpage with a list of threads in boxes -->
-        <div class="select_thread_frame">
+        <ul class="list-group" id="select_thread_frame">
 
             <!-- Loop through the list of all threads in messageboard and display them on
             the left side of the screen each within their own box -->
             {% for thread in threadList %}
             {% if thread.thread_ID == currentThreadNum %}
-            <div id="thread{{thread.thread_ID}}" class="thread_selection_box" onclick="changeThread(this, {{thread.thread_ID}})" 
+            <li id="thread{{thread.thread_ID}}" class="list-group-item active" onclick="changeThread(this, {{thread.thread_ID}})" 
             style="background: #FFBB99; border: 1px solid #BBBB00;">
+            <div id="activeThread">
             {% else %}
-            <div id="thread{{thread.thread_ID}}" class="thread_selection_box" onclick="changeThread(this, {{thread.thread_ID}})">
+            <li id="thread{{thread.thread_ID}}" class="list-group-item" onclick="changeThread(this, {{thread.thread_ID}})">
+            <div id="inactiveThread">
             {% endif %}
                 <div style="color: #666666; font-size: 12px; ">
                     Posted: {{thread.thread_date}}<br>
-                    Thread ID: {{thread.thread_ID}}
+                    <!--User: {{thread.thread}}-->
+                    <!--Thread ID: {{thread.thread_ID}}-->
                 </div>
-                <div id="threadTopic{{thread.thread_ID}}">
+                <div style="font-size: 24px;" id="threadTopic{{thread.thread_ID}}">
                     {{thread.threadTopic}}
                 </div>
                 <div style="color: #666666;font-size: 16px; font-weight: normal;">
@@ -54,16 +83,18 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
                     {% endif %}
                     {% endfor %}
                 </div>
-            </div>
+                </div>
+            </li>
             {% endfor %}
-        </div>
+        </ul>
 
         <!-- Right side of webpage with the list of posts for the selected thread -->
-        <div class="display_thread_frame">
+        <ul class="list-group">
             <!-- Loop through the list of all posts in thread and display them on
             the right side of the screen each within their own box -->
             {% for post in posts %}
-            <div id="post{{post.post_ID}}" class="post_box">
+            <li class="list-group-item" id="post{{post.post_ID}}" class="post_box">
+                <div id="post_box">
                 <div style="font-size: 12px; margin: 2px 2px 2px 2px; color: #666666;">
                     User: {{post.username}}
                 </div>
@@ -76,18 +107,22 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
                 {% endif %}
                 {{post.main_text}}
                 </div>
-            </div>
+                </div>
+            </li>
             {% endfor %}
             {% if posts %}
             <div style="margin-left: 20px; margin-top: 20px;">
             <form id="postInput" action="" method="POST">
+                <div class="form-group">
                 {% csrf_token %}
-                {{ form }}
-                <input type="submit" value="Submit">
+                <label for="post_input_box">{{ form.mainText.label }}</label>
+                <textarea class="form-control" id="post_input_box" name="mainText"></textarea>
+                <input type="submit" value="Submit" class="btn btn-primary" id="post_input_box">
+                </div>
             </form>
             </div>
             {% endif %}
-        </div>
+        </ul>
 
     </div>
 
