@@ -51,7 +51,7 @@ def loginPage(request):
     # valid user
     if user is not None:
       login(request, user)
-      return redirect("home") # url may change over time
+      return redirect("messageboard") # url may change over time
     else:
       messages.info(request, "Username or Password is incorrect")
   return render(request, 'registration/login.html', context)
@@ -72,7 +72,7 @@ def LoginSignUpFunction(request):
         # valid user
         if user is not None:
           login(request, user)
-          return redirect("home") # url may change over time
+          return redirect("/messageboard") # url may change over time
         else:
           messages.info(request, "Username or Password is incorrect")
     else:
