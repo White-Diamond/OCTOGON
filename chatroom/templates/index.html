@@ -179,10 +179,10 @@
         ***********************************************************************
         */
 
-        let createUserElem = function(user, count){
+        let createUserElem = function(user){
             return `<button type="button" class="d-flex list-group-item list-group-item-action justify-content-between align-items-center my-user-button">
-                        <span class="text-truncate">
-                            <i class="fas fa-user-circle me-2"></i>
+                        <span class="d-flex align-items-center text-truncate">
+                            <i class="fas fa-user-circle fa-lg me-2"></i>
                             <span>${user}</span>
                         </span>
                         <span type="span-close-button" class="btn-close my-x-button"></span>
@@ -293,7 +293,7 @@
         function attachUserListToUserDiv(otherUsers){
             // create HTML list
             let htmlList = otherUsers.reduce( (htmlList, otherUser)=> {
-                let elem = createUserElem(otherUser, 0);
+                let elem = createUserElem(otherUser);
                 htmlList += elem;
                 return htmlList;
             }, '');
@@ -494,7 +494,7 @@
 
             // put classmate into otherUsers and remove classmate from its list
             otherUser = classmates[index];
-            otherUsers.push(classmates[index]);
+            otherUsers.unshift(classmates[index]);
             classmates.splice(index, 1);
 
             // get cnversation
@@ -654,9 +654,12 @@
             //}, 400);
         }
 
-        // 1.) create a new message dot feature- must work for messages sent from classmates in classmate list
-        //     and for new messages sent by the otherUsers list
+        // 1.) create a notification feature- must work for unseen messages from classmates list
+        //     and otherUsesrs list
         // 2.) create a helper function for post requests
+        // 3.) For the notification make sure my state reflects what I want to have updated on the page.
+        //      right now my sstate isss an array because only names are updated on the user list. I want
+        //      notifications to be updated on the user list as well so my list should reflect that.
 
         // run app
         main();
