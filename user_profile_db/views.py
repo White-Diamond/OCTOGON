@@ -15,3 +15,7 @@ def add_class(request):
         if form.is_valid():
         
 def remove_class(request):
+	if request.method == 'POST':
+		form = remove_course_form(request.POST)
+		if form.is_valid():
+		
