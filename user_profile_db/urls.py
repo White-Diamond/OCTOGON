@@ -6,5 +6,5 @@ app_name = 'user_profile_db'
 urlpatterns = [
     path('addclass/', views.add_class),
     path('removeclass/', views.remove_class),
-    #path('',),
+    path('manageclasses/', views.class_selection),
 ]
