@@ -1,7 +1,4 @@
 
 *.sqlite3
 *.pyc
-user_profile_db/migrations/0001_initial.py
-user_profile_db/migrations/0004_auto_20210426_1756.py
-user_profile_db/migrations/0002_auto_20210426_1731.py
-user_profile_db/migrations/0003_auto_20210426_1745.py
+
