@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group
 from django.contrib import messages # success message
 from datetime import datetime # date display for homepage
 
-from .forms import CreateUserForm, UserProfileForm
+from .forms import CreateUserForm
 from .decorators import unauthenticated_user, allowed_users # checks user authentication
 
 def signup(request):

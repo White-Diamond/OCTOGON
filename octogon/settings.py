@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'profilepage',
     'messageboard',
     'chatroom',
+    'user_profile_db',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course, Profile
+from profilepage.models import Course, Profile
 
 class add_course_form(forms.Form):
     def __init__(self, *args, **kwargs):

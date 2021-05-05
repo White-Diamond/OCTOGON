@@ -1,5 +1,5 @@
 from django.test import TestCase
-from user_profile_db.models import Course, Profile
+from profilepage.models import Course, Profile
 from django.contrib.auth.models import User
 
 class ProfileTestCase(TestCase):

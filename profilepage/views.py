@@ -4,7 +4,7 @@ from .models import Profile, Course
 
 def index(request):
 
-    data = Profile.objects.get(duser=request.user)
+    data = Profile.objects.get(user=request.user)
 
     #show yes or no insteasd of true and false
     if (data.is_instructor):
@@ -12,10 +12,10 @@ def index(request):
     else:
         ins = 'No'
     context = {
-        'firstname': data.name_first,
-        'lastname': data.name_last,
-        'username': data.duser.username,
-        'email': data.duser.email,
+        'firstname': data.user.first_name,
+        'lastname': data.user.last_name,
+        'username': data.user.username,
+        'email': data.user.email,
         'instructor': ins,
         'courses': data.courses,
     }
