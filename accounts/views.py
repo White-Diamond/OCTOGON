@@ -19,8 +19,7 @@ def signup(request):
 
   if request.method == "POST":
     form = CreateUserForm(request.POST)
-    # profile_form = UserProfileForm(request.POST)
-    # if form.is_valid() and profile_form.is_valid():
+
     if form.is_valid():
       user = form.save()
 
@@ -29,10 +28,6 @@ def signup(request):
       group = Group.objects.get(name='student')
       user.groups.add(group)
       
-      #profile = profile_form.save(commit=False)
-      #profile.user = user
-      #profile.save()
-
       messages.success(request, 'Account was created for ' + username)
       return redirect('login')
     else:
