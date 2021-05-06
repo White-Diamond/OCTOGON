@@ -14,3 +14,4 @@ urlpatterns = [
     path('', include('user_profile_db.urls')),
 ]
 
+handler404 = 'accounts.views.error_404_view'

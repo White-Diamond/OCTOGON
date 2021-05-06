@@ -13,6 +13,9 @@ from datetime import datetime # date display for homepage
 from .forms import CreateUserForm
 from .decorators import unauthenticated_user, allowed_users # checks user authentication
 
+def error_404_view(request, exception):
+  return render(request, '404.html') 
+
 def signup(request):
   form = CreateUserForm()
   context = {'register': form}
