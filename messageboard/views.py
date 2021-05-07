@@ -4,7 +4,6 @@ from django.http import JsonResponse
 
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from django.contrib.sites.models import Site
 # Import "from post.models" all the models from the threads and posts
 # in Ryan's message & post database branch
 from posts.models import Thread
@@ -28,8 +27,6 @@ def mainBoard (request):
     context['currentThread'] = None
     context['posts'] = []
     context['orig_posts'] = list(Post.objects.filter(post_ID=0))
-    this_website = Site.objects.get_current()
-    context['domain'] = this_website.domain
     return render(request, "board.html", context)
 
 
@@ -66,8 +63,6 @@ def getThreadPosts (request, thrdID):
     context = {}
     context['threadList'] = list(Thread.objects.all())
     context['numberThreads'] = len(context['threadList'])
-    this_website = Site.objects.get_current()
-    context['domain'] = this_website.domain
     # Check if messageboard has thread with ID requested: If not, then redirect 
     # to default messageboard.
     try:
