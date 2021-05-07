@@ -4,7 +4,7 @@ from django.db import models
 class UserList(models.Model):
     active_user = models.CharField(max_length=50)
     other_user = models.CharField(max_length=50) 
-    viewed = models.BooleanField(default=False)
+    has_notification = models.BooleanField(default=False)
 
 class Message(models.Model):
     to_id = models.CharField(max_length=50)

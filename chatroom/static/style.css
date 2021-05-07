@@ -1,0 +1,43 @@
+body, html{
+    height: 100%;
+    width: 100%;
+}
+.card-header{
+    height: 50px;
+}
+.chat-bubble{
+    border-radius: 5px;
+    padding: 5px;
+}
+.sent{
+    float: right;
+    color: white;
+    max-width: 40rem;
+    background-color: rgba(61, 139, 241, 1);
+}
+.received{
+    float: left;
+    color: black;
+    max-width: 40rem;
+    background-color: rgba(229, 229, 234, 1);
+}
+.separator{
+    clear: both;
+    background-color: gray;
+}
+.message-box{
+    max-height: 150px;
+    overflow: auto;
+}
+[contenteditable=true]:empty:before {
+    content: attr(placeholder);
+    pointer-events: none;
+    color: #636c72;
+    display: block; /* For Firefox */
+}
+.my-x-button{
+    display: none;
+}
+.my-user-button:hover .my-x-button{
+    display: block;
+}

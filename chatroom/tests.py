@@ -46,7 +46,7 @@ class MessageAPITestCase(TestCase):
 class UserListTestCase(TestCase):
     def setUp(self):
         # setup all necessary models for tests
-        UserList.objects.create(active_user='ben', other_user='mark', viewed=False)
+        UserList.objects.create(active_user='ben', other_user='mark', has_notification=False)
 
     def test_active_user(self):
         # get user out
