@@ -9,6 +9,7 @@ import time
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.alert import Alert
 
 class threadCreation(TestCase):
     
@@ -65,9 +66,9 @@ class threadCreation(TestCase):
         # Log into website using a dummy user, 'mike2' and password 'mikejones420'
         self.driver = webdriver.Firefox()
         self.driver.get("http://127.0.0.1:8000/accounts/login/")
-        username_input = selenium.find_element_by_id('username')
-        password_input = selenium.find_element_by_id('password')
-        signInButton = selenium.find_element_by_id('signIn-action')
+        username_input = self.driver.find_element_by_id('username')
+        password_input = self.driver.find_element_by_id('password')
+        signInButton = self.driver.find_element_by_id('signIn-action')
         username_input.send_keys('mike2')
         password_input.send_keys('mikejones420')
         signInButton.click()
@@ -77,8 +78,8 @@ class threadCreation(TestCase):
         currentLatestThreadNum = Thread.objects.aggregate(Max('thread_ID'))
         currentLatestThreadNum = currentLatestThreadNum["thread_ID__max"]
 
-        topic = self.driver.find_element_by_id("id_threadTopic")
-        postText = self.driver.find_element_by_id("id_post_text")
+        topic = self.driver.find_element_by_id("topic_input_box")
+        postText = self.driver.find_element_by_id("post_input_box")
         topic.send_keys("Selenium Testing Topic")
         postText.send_keys("Selenium sample text for post")
         self.driver.find_element_by_id("threadForm").submit()
@@ -95,9 +96,9 @@ class threadCreation(TestCase):
         # Log into website using a dummy user, 'mike2' and password 'mikejones420'
         self.driver = webdriver.Firefox()
         self.driver.get("http://127.0.0.1:8000/accounts/login/")
-        username_input = selenium.find_element_by_id('username')
-        password_input = selenium.find_element_by_id('password')
-        signInButton = selenium.find_element_by_id('signIn-action')
+        username_input = self.driver.find_element_by_id('username')
+        password_input = self.driver.find_element_by_id('password')
+        signInButton = self.driver.find_element_by_id('signIn-action')
         username_input.send_keys('mike2')
         password_input.send_keys('mikejones420')
         signInButton.click()
@@ -105,9 +106,12 @@ class threadCreation(TestCase):
 
         # Write dummy post text into form and submit
         currentLatestThreadNum = 1
-        postText = self.driver.find_element_by_id("postInput")
+        currentLatestThreadNum = Thread.objects.aggregate(Max('thread_ID'))
+        currentLatestThreadNum = currentLatestThreadNum["thread_ID__max"]
+
+        postText = self.driver.find_element_by_id("post_input_box")
         postText.send_keys("Sample text for a new post with Selenium")
-        self.driver.find_element_by_id("postInput").submit()
+        self.driver.find_element_by_id("post_input_btn").submit()
 
         # Get latest/last post displayed on for current thread (should be the one we just made).
         maxPostNumber = Post.objects.filter(owning_thread_ID=1).aggregate(Max('post_ID'))
@@ -115,18 +119,38 @@ class threadCreation(TestCase):
         topPost = Post.objects.get(owning_thread_ID=1, post_ID=maxPostNumber)
 
         # Navigate back to messageboard and check if latest post on thread is the one we just made
-        self.driver.get("http://127.0.0.1:8000/messageboard/thread/1/")
+        self.driver.get("http://127.0.0.1:8000/messageboard/thread/" + str(currentLatestThreadNum) + "/")
         newlyMadePost = self.driver.find_element_by_id("post" + str(maxPostNumber))
-        self.assertEqual(newlyMadeThread.text, "Sample text for a new post with Selenium")
+        self.assertEqual(newlyMadePost.text, "Sample text for a new post with Selenium")
 
+
+    # Test to make sure navbar links correctly to other parts of OCTOGON
     def test_navbar(self):
         # Log into website using a dummy user, 'mike2' and password 'mikejones420'
         self.driver = webdriver.Firefox()
         self.driver.get("http://127.0.0.1:8000/accounts/login/")
-        username_input = selenium.find_element_by_id('username')
-        password_input = selenium.find_element_by_id('password')
-        signInButton = selenium.find_element_by_id('signIn-action')
+        username_input = self.driver.find_element_by_id('username')
+        password_input = self.driver.find_element_by_id('password')
+        signInButton = self.driver.find_element_by_id('signIn-action')
         username_input.send_keys('mike2')
         password_input.send_keys('mikejones420')
         signInButton.click()
         
+        # Test if messageboard link works
+        self.driver.get("http://127.0.0.1:8000/messageboard/")
+        e_messageboard = self.driver.find_element_by_id("messageboard-link")
+        e_messageboard.click()
+        self.assertEqual(self.driver.current_url, "http://127.0.0.1:8000/messageboard/")
+        
+        # Test if the chatroom page can be reached
+        e_chatroom = self.driver.find_element_by_id("chatroom-link")
+        e_chatroom.click()
+        chat_alert = Alert(self.driver)
+        chat_alert.dismiss()
+        self.assertEqual(self.driver.current_url, "http://127.0.0.1:8000/chatroom/")
+
+        # Test if profile page can be reached
+        self.driver.get("http://127.0.0.1:8000/messageboard/")
+        e_profilepage = self.driver.find_element_by_id("profile-link")
+        e_profilepage.click()
+        self.assertEqual(self.driver.current_url, "http://127.0.0.1:8000/profilepage/")

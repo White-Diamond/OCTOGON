@@ -24,10 +24,10 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
             </div>
             <ul class="nav navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main-messageboard' %}">Messageboard</a>
+                    <a id="messageboard-link" class="nav-link" href="{% url 'main-messageboard' %}">Messageboard</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'chatroom-page' %}">Chatroom</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">My Profile</a></li>
+                <li class="nav-item"><a id="chatroom-link" class="nav-link" href="{% url 'chatroom-page' %}">Chatroom</a></li>
+                <li class="nav-item"><a id="profile-link" class="nav-link" href="{% url 'index' %}">My Profile</a></li>
             </ul>
         </div>
     </nav>
@@ -104,7 +104,7 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
                 {% csrf_token %}
                 <label for="post_input_box">{{ form.mainText.label }}</label>
                 <textarea class="form-control" id="post_input_box" name="mainText"></textarea>
-                <input type="submit" value="Submit" class="btn btn-primary" id="post_input_box">
+                <input type="submit" value="Submit" class="btn btn-primary" id="post_input_btn">
                 </div>
             </form>
             </div>
