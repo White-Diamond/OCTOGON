@@ -25,9 +25,9 @@ with open(os.path.join(BASE_DIR, 'secret_key.txt')) as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['octogon-board.herokuapp.com', '.herokuapp.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -136,19 +136,5 @@ EMAIL_FILE_PATH = str(BASE_DIR.joinpath('accounts/sent_emails'))
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 django_heroku.settings(locals())
-
-# Used to enable the ability to get the domain name of the server
-SITE_ID = 1
-SET_DOMAIN = ''#'https://octogon-board.herokuapp.com/'
-
-# HTTPS settings
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
-
-# HSTS settings
-SECURE_HSTS_SECONDS = 31536000 # 1 YEAR
-SECURE_HSTS_PRELOAD = True
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
