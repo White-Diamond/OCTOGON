@@ -10,26 +10,47 @@
     <p></br></br></p>
     <title>User Information</title>
   </head>
-  <body style="background-color:purple;">
+  <body style="background-color:white;">
     <!-- Display Title -->
-    <h1  class="text-white text-center">User Information</h1>
+    <h1  class="text-primary text-center">User Information</h1>
     <p></br></br></p>
-    <!-- Card for Profile Information -->
-    <div class="card align-item-center text-white bg-secondary" style="width: 21.5em;margin:0 auto;">
-        <div class="card-body" style="background-color: .bg-secondary.bg-gradient;">
+    <!-- Form in card for Profile Information -->
+    <form method="post" action=" edit/" class="card align-item-center text-white bg-secondary" style="width: 26.5em;margin:0 auto;">
+      {% csrf_token %}
+        <div class="card-body" style="background-color:#bdbdbd">
             <table class="table">
               <tbody>
                 <tr>
-                  <th scope="row">Name</th>
-                  <td scope="row" id="name">{{ firstname }} {{ lastname }}</td>
+                  <th scope="row">First Name</th>
+                  <td scope="row" id="fname">
+                    <div class="input-group mb-3">
+                      <input type="text" class="form-control" id="fname" name="fname" placeholder="First Name" value={{ firstname }}>
+                    </div>
+                  </td>
+                </tr>
+                 <tr>
+                  <th scope="row">Last Name</th>
+                  <td scope="row" id="lname">
+                    <div class="input-group mb-3">
+                      <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" value={{ lastname }}>
+                    </div>
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Username</th>
-                  <td id="uname">{{ username }}</td>
+                  <td scope="row" id="uname">
+                    <div class="input-group mb-3">
+                      <input type="text" class="form-control" id="uname" name="uname" placeholder="Username" value={{ username }}>
+                    </div>
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Email</th>
-                  <td id="email">{{ email }}</td>
+                  <td id="email">
+                    <div class="input-group mb-3">
+                      <input type="text" class="form-control" id="email" name="email" placeholder="Email" value={{ email }}>
+                    </div>
+                  </td>
                 </tr>
                 <tr>
                   <th scope="row">Instructor status</th>
@@ -48,6 +69,19 @@
               </tbody>
             </table>
         </div>
+        <div class="card align-item-center" style="width: 26.4em;margin:0 auto;">
+          <div class="card-body text-center">
+            <div class="row">
+              <div class="col-md-6">
+                <button type="submit" class="btn btn-primary align-item-center mr-1">Update</button>
+              </div>
+              <div class="col-md-6">
+                <button onClick="window.location.reload();" type="button" class="text-right btn btn-primary align-item-center mr-1">Restore</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
