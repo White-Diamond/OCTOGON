@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,7 @@ EMAIL_FILE_PATH = str(BASE_DIR.joinpath('accounts/sent_emails'))
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 django_heroku.settings(locals())
+
+# Used to enable the ability to get the domain name of the server
+SITE_ID = 1
+SET_DOMAIN = ''#'https://octogon-board.herokuapp.com/'
