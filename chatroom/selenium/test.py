@@ -7,9 +7,25 @@ selenium = webdriver.Chrome(executable_path="./chromedriver")
 
 def main():
     #Choose your url to visit
+    selenium.get('http://127.0.0.1:8000/admin')
+
+    #
+    # User must enter create a student group, user, and
+    # login with that user. Afterwards wait on the mssage board
+    # page until re-directed to the chatroom url
+    #
+
+    sleep(30) 
+
+    # go to chatroom
     selenium.get('http://127.0.0.1:8000/chatroom')
-    #wait for prompt to be entered
-    sleep(3) 
+
+    #
+    # User must wait until prompt is entered. Enter the
+    # name 'ben' for now.
+    #
+
+    sleep(5) 
 
     # tests
     test_send_message()

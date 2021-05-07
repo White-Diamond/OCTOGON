@@ -10,8 +10,8 @@ from django.contrib.auth.models import Group
 from django.contrib import messages # success message
 from datetime import datetime # date display for homepage
 
-from .forms import CreateUserForm, UserProfileForm
-from .decorators import unauthenticated_user, allowed_users # checks user authentication
+from .forms import CreateUserForm
+from .decorators import unauthenticated_user, authenticated_user, allowed_users # checks user authentication
 
 def signup(request):
   form = CreateUserForm()
@@ -56,7 +56,7 @@ def loginPage(request):
       messages.info(request, "Username or Password is incorrect")
   return render(request, 'registration/login.html', context)
 
-@unauthenticated_user
+@authenticated_user
 def LoginSignUpFunction(request):
   if request.method == "POST":
     signin_button = request.POST.get('button-name', False)

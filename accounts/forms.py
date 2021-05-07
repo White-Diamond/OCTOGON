@@ -9,8 +9,3 @@ class CreateUserForm(UserCreationForm):
   class Meta:
     model = User
     fields = ['username', 'email', 'password1', 'password2']
-
-class UserProfileForm(ModelForm):
-  class Meta:
-    model = Profile
-    fields = ['name_first', 'name_last', 'is_instructor', 'courses']
