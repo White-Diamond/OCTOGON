@@ -25,9 +25,9 @@ with open(os.path.join(BASE_DIR, 'secret_key.txt')) as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['octogon-board.herokuapp.com', '.herokuapp.com']
 
 
 # Application definition
@@ -140,3 +140,15 @@ django_heroku.settings(locals())
 # Used to enable the ability to get the domain name of the server
 SITE_ID = 1
 SET_DOMAIN = ''#'https://octogon-board.herokuapp.com/'
+
+# HTTPS settings
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+
+# HSTS settings
+SECURE_HSTS_SECONDS = 31536000 # 1 YEAR
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
