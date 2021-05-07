@@ -62,7 +62,15 @@ class threadCreation(TestCase):
 
     # Test user making a thread
     def test_make_thread(self):
+        # Log into website using a dummy user, 'mike2' and password 'mikejones420'
         self.driver = webdriver.Firefox()
+        self.driver.get("http://127.0.0.1:8000/accounts/login/")
+        username_input = selenium.find_element_by_id('username')
+        password_input = selenium.find_element_by_id('password')
+        signInButton = selenium.find_element_by_id('signIn-action')
+        username_input.send_keys('mike2')
+        password_input.send_keys('mikejones420')
+        signInButton.click()
         self.driver.get("http://127.0.0.1:8000/messageboard/")
         self.driver.get("http://127.0.0.1:8000/threadcreate/")
 
@@ -84,7 +92,15 @@ class threadCreation(TestCase):
 
     # Test user making post on a thread
     def test_make_post(self):
+        # Log into website using a dummy user, 'mike2' and password 'mikejones420'
         self.driver = webdriver.Firefox()
+        self.driver.get("http://127.0.0.1:8000/accounts/login/")
+        username_input = selenium.find_element_by_id('username')
+        password_input = selenium.find_element_by_id('password')
+        signInButton = selenium.find_element_by_id('signIn-action')
+        username_input.send_keys('mike2')
+        password_input.send_keys('mikejones420')
+        signInButton.click()
         self.driver.get("http://127.0.0.1:8000/messageboard/thread/1/")
 
         # Write dummy post text into form and submit
@@ -103,4 +119,14 @@ class threadCreation(TestCase):
         newlyMadePost = self.driver.find_element_by_id("post" + str(maxPostNumber))
         self.assertEqual(newlyMadeThread.text, "Sample text for a new post with Selenium")
 
+    def test_navbar(self):
+        # Log into website using a dummy user, 'mike2' and password 'mikejones420'
+        self.driver = webdriver.Firefox()
+        self.driver.get("http://127.0.0.1:8000/accounts/login/")
+        username_input = selenium.find_element_by_id('username')
+        password_input = selenium.find_element_by_id('password')
+        signInButton = selenium.find_element_by_id('signIn-action')
+        username_input.send_keys('mike2')
+        password_input.send_keys('mikejones420')
+        signInButton.click()
         

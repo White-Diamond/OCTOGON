@@ -15,47 +15,32 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
 <meta name="viewport" content="height=device-height, initial-scale=1.0">
 </head>
 <body>
-    <!--
-    <h1>
-        Hello, {{userid}}!
-    </h1>
-    -->
-    <div class="row">
-        <div class="col-1">
-            <div style="white-space:nowrap; overflow:hidden; font-size:16px; display:flex; align-items: center; justify-content: center;">
-                Hello, {{userid}}!
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-xl bg-light">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a style="font-size: 40px; font-weight: 700;" class="navbar-brand" href="{% url 'login' %}">OCTOGON</a>
             </div>
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'main-messageboard' %}">Messageboard</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'chatroom-page' %}">Chatroom</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">My Profile</a></li>
+            </ul>
         </div>
-        <div class="col-1">
-        <button style="width:100%" type="button" class="btn btn-primary" onclick="gotoChatroom(this)">
-            Go to My Chatroom
-        </button>
-        </div>
-        <div class="col-1">
-        <button style="width:100%" type="button" class="btn btn-primary" onclick="gotoUserpage(this)">
-            View My Profile
-        </button>
-        </div>
-    </div>
+    </nav>
 
-    <div class="board_title">OCTOGON</div>
 
-    <div class="container-fluid">
-        <div class="col-xl-3">
-            <div style="width:100%;" type="button" class="btn btn-primary" onclick="threadcreate(this)">
-                Create New Thread
-            </div>
-        </div>
-    <div class="col-xl-9">
-
-    </div>
-    </div>
-
+    <!-- THREADS AND POSTS -->
     <!-- Frame which contains all thread and post related content -->
     <div class="baseframe">
-        
+
+        <!-- THREADS -->
         <!-- Left side of webpage with a list of threads in boxes -->
-        <ul class="list-group" id="select_thread_frame">
+        <div class="select_thread_frame_outer">
+        <ul class="list-group select_thread_frame" id="select_thread_frame">
 
             <!-- Loop through the list of all threads in messageboard and display them on
             the left side of the screen each within their own box -->
@@ -70,8 +55,6 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
             {% endif %}
                 <div style="color: #666666; font-size: 12px; ">
                     Posted: {{thread.thread_date}}<br>
-                    <!--User: {{thread.thread}}-->
-                    <!--Thread ID: {{thread.thread_ID}}-->
                 </div>
                 <div style="font-size: 24px;" id="threadTopic{{thread.thread_ID}}">
                     {{thread.threadTopic}}
@@ -87,9 +70,13 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
             </li>
             {% endfor %}
         </ul>
+        </div>
 
+        <!-- POSTS -->
         <!-- Right side of webpage with the list of posts for the selected thread -->
-        <ul class="list-group">
+        <div class="display_thread_frame_outer">
+        <ul class="list-group" style="margin: 10px 10px 10px 10px;">
+            
             <!-- Loop through the list of all posts in thread and display them on
             the right side of the screen each within their own box -->
             {% for post in posts %}
@@ -123,9 +110,23 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
             </div>
             {% endif %}
         </ul>
-
+        </div>
     </div>
 
+
+    <!-- CREATE NEW THREAD BUTTON -->
+    <div class="make_thread_btn_frame">
+    <div class="container-fluid">
+        <div class="col-xl-12">
+            <div style="width:100%;" type="button" class="btn btn-primary" onclick="threadcreate(this)">
+                Create New Thread
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <!-- SCRIPTS -->
     <!-- Script for retreiving the posts for a specific thread when the thread selection
     box is clicked. Causes a webpage request -->
     {% block javascript %}
