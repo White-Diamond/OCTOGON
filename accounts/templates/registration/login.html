@@ -13,12 +13,7 @@
   <meta property="og:url" content="">
   <meta property="og:image" content="">
 
-  <link rel="manifest" href=" {% static 'site.webmanifest' %} ">
-
-  <!-- favicon.ico located in the root directory -->
-  <link rel="icon" href=" {% static 'favicon.ico' %} " type="image/x-icon" />
-  <link rel="shortcut icon" href=" {% static 'favicon.ico' %} " type="image/x-icon" />
-
+ 
   <link rel="stylesheet" href=" {% static 'login/css/normalize.css' %} ">
   <link rel="stylesheet" href=" {% static 'login/css/main.css' %} ">
   <link rel="stylesheet" href=" {% static 'login/css/styles.css' %} ">
@@ -48,14 +43,23 @@
 	<div class="form-container sign-up-container">
 		<form action="#" id="form" method="POST">
       <h1>Create Account</h1>
-			<div class="social-container">
+
+      <script>
+        function goto_signIn(){
+          const container = document.getElementById('container');
+          container.classList.remove("right-panel-active")
+        }
+      </script>
+			
+      <div class="social-container">
         <ul>
-				<li><a href="#" class="social"><i class="fab fa-facebook-f"></i></a></li>
-				<li><a href="#" class="social"><i class="fab fa-google-plus-g"></i></a></li>
-				<li><a href="#" class="social"><i class="fab fa-linkedin-in"></i></a></li>
+				<li><a href="#" class="social" onclick="goto_signIn()"><i class="fas fa-arrow-left" ></i></a></li>
+				<li><a href="https://just-shower-thoughts.com/" class="social"><i class="fas fa-egg"></i></a></li>
+				<li><a href="{% url 'home' %}" class="social"><i class="fas fa-arrow-right"></i></a></li>
         </ul>
       </div>
-			<span>or use your email for registration</span>
+			
+      <span>and use your email for registration</span>
 
       {% csrf_token %}
       <div class="form-control">
@@ -93,14 +97,22 @@
 		<form action="#" id="form" method="POST">
 
       <h1>Sign in</h1>
+      
+      <script>
+        function goto_signUp(){
+          const container = document.getElementById('container');
+          container.classList.add("right-panel-active")
+        }
+      </script>
+
 			<div class="social-container">
 				<ul>
-          <li><a href="#" class="social"><i class="fab fa-facebook-f"></i></a></li>
-          <li><a href="#" class="social"><i class="fab fa-google-plus-g"></i></a></li>
-          <li><a href="#" class="social"><i class="fab fa-linkedin-in"></i></a></li>
+          <li><a href="{% url 'home' %}" class="social"><i class="fas fa-arrow-left"></i></a></li>
+          <li><a href="https://bouncingdvdlogo.com/" class="social"><i class="fab fa-octopus-deploy"></i></a></li>
+          <li><a class="social" onclick="goto_signUp()"><i class="fas fa-arrow-right" ></i></a></li>
         </ul>
 			</div>
-			<span>or use your account</span>
+			<span>to your account</span>
 
       {% csrf_token %}
 
@@ -144,16 +156,14 @@
         {% endif %}
 
         <p>Enter your personal details and start your journey with us!</p>
-				<button class="ghost" id="signUp" >Sign Up</button>
-
+        <button class="ghost" id="signUp">Sign Up</button>
       </div>
 		</div>
 	</div>
 </div>
-
-  <script src=" {% static 'login/js/plugins.js' %} "></script>
-  <script src=" {% static 'login/js/button_action.js' %} "></script>
-  <script src=" {% static 'login/js/scripts.js' %} "></script>
+  <script type="text/javascript" src=" {% static 'login/js/button_action.js' %} "></script>
+  <script type="text/javascript" src=" {% static 'login/js/plugins.js' %} "></script>
+  <script type="text/javascript" src=" {% static 'login/js/scripts.js' %} "></script>
 
 {% endblock %}
 

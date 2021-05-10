@@ -27,8 +27,8 @@ with open(os.path.join(BASE_DIR, 'secret_key.txt')) as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['octogon-board.herokuapp.com', '.herokuapp.com', '127.0.0.1']
+# ALLOWED_HOSTS = ['.herokuapp.com', 'octogon-board.herokuapp.com]
 
 # Application definition
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'profilepage',
     'messageboard',
     'chatroom',
+    'user_profile_db',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,7 +84,7 @@ WSGI_APPLICATION = 'octogon.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -135,3 +136,15 @@ EMAIL_FILE_PATH = str(BASE_DIR.joinpath('accounts/sent_emails'))
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 django_heroku.settings(locals())
+
+# # HTTPS settings
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SECURE_SSL_REDIRECT = True
+
+# # HSTS settings
+# SECURE_HSTS_SECONDS = 31536000 # 1 YEAR
+# SECURE_HSTS_PRELOAD = True
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

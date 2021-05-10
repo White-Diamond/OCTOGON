@@ -15,6 +15,13 @@ def authenticated_user(view_func):
       return view_func(request, *args, **kwargs)
   return wrapper_func
 
+def authenticated_user(view_func):
+  def wrapper_func(request, *args, **kwargs):
+      if not request.user.is_authenticated:
+        return redirect("home")
+      return view_func(request, *args, **kwargs)
+  return wrapper_func
+
 # function call ex: @allowed_users(allowed_roles=['admin', 'student'])
 # IMPORTANT: Must create groups in the admin page
 def allowed_users(allowed_roles=[]):
