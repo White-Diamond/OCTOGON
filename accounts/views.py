@@ -16,7 +16,7 @@ from .decorators import unauthenticated_user, allowed_users, authenticated_user 
 def error_404_view(request, exception):
   return render(request, '404.html') 
 
-@authenticated_user
+@unauthenticated_user
 def redirect_message_board(request):
   return redirect("/messageboard")
 
