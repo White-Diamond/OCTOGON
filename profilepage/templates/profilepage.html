@@ -7,8 +7,25 @@
     <!-- Pointless comment -->
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <p></br></br></p>
-    <title>User Information</title>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-xl bg-light" style="border-bottom: 2px solid #c4c4c4;height:7vh;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a style="font-size: 40px; font-weight: 700;" class="navbar-brand" href="{% url 'login' %}">OCTOGON</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a id="messageboard-link" class="nav-link" href="{% url 'main-messageboard' %}">Messageboard</a>
+                </li>
+                <li class="nav-item"><a id="chatroom-link" class="nav-link" href="{% url 'chatroom-page' %}">Chatroom</a></li>
+                <li class="nav-item"><a id="profile-link" class="nav-link" href="{% url 'index' %}">My Profile</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div style="padding-top:60px">
+        <title>User Information</title>
+    </div>
   </head>
   <body style="background-color:white;">
     <!-- Display Title -->
