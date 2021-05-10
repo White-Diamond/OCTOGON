@@ -7,6 +7,7 @@ class Course(models.Model):
     name_short = models.CharField(max_length=8, unique=True)
     name_long = models.CharField(max_length=100, unique=True)
     description = models.TextField()
+
     def __str__(self):
         return self.name_short
 

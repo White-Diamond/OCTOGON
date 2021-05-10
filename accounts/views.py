@@ -58,7 +58,7 @@ def loginPage(request):
       messages.info(request, "Username or Password is incorrect")
   return render(request, 'registration/login.html', context)
 
-@unauthenticated_user
+@authenticated_user
 def LoginSignUpFunction(request):
   if request.method == "POST":
     signin_button = request.POST.get('button-name', False)

@@ -1,41 +1,51 @@
-from django.test import TestCase
+from time import sleep
+from django.contrib.auth.models import User
+from django.test import TestCase, RequestFactory
 from profilepage.models import Course, Profile
 from selenium import webdriver
 
-class UserTestCase(TestCase):
+class ProfileTestCase(TestCase):
+    #setup for tests
     def setUp(self):
-        Profile.objects.create(username="warsh1", email="example@example.com", password="password", name_first="James",
-                            name_last="Warshaw", is_instructor=False)
-        Course.objects.create(name_short="CMSC 447", name_long="Software Engineering I")
-        Profile.objects.create(username="test", email="test@umbc.edu", password="password", name_first="John",
-                            name_last="Doe", is_instructor=False)
+        u = User.objects.create(username="ryantest", email="example@example.com", password="password", first_name="Ryant",
+                            last_name="Hummelt")
+        Course.objects.create(name_short="CMSC 447", name_long="Software Engineering I", description="text goes here")
 
 
     def test_User(self):
         driver = webdriver.Chrome()
-        user = Profile.objects.get(username="warsh1")
+        #backend test
+        user = User.objects.get(username="ryantest")
         user.save()
+        profile = Profile.objects.get(user=user)
         course = Course.objects.get(name_short="CMSC 447")
-        course.save()
-        self.assertEqual(user.name_first, "James")
-        self.assertEqual(user.name_last, "Warshaw")
-        self.assertEqual(user.is_instructor, False)
-        user.courses.add(course)
+        self.assertEqual(profile.user.first_name, "Ryant")
+        self.assertEqual(profile.user.last_name, "Hummelt")
+        self.assertEqual(profile.user.email, "example@example.com")
+        self.assertEqual(profile.is_instructor, False)
+        profile.courses.add(course)
         user.save()
-        self.assertEqual(user.courses.get(id=1), course)
-        self.assertEqual(user.courses.get(id=1).name_long, "Software Engineering I")
+        self.assertEqual(profile.courses.get(name_short="CMSC 447"), course)
+        self.assertEqual(profile.courses.get(name_short="CMSC 447").name_long, "Software Engineering I")
 
         #Front-end tests using selenium
-        #Tests work if database entry is added manually
-        #They fail for now because we have not fully integrated the signup page and the profile page
-        # driver.get("http://127.0.0.1:8000/")
-        # self.assertEqual(driver.title, "User Information")
+        # driver.get("http://127.0.0.1:8000/accounts/login/")
+        # uname_input = driver.find_element_by_id('username')
+        # pass_input = driver.find_element_by_id('password')
+        # signInButton = driver.find_element_by_id('signIn-action')
+        # uname_input.send_keys("ryantest")
+        # pass_input.send_keys("password")
+        # signInButton.click()
+        # sleep(3)
+        # self.assertEqual(driver.title(), "User Information")
         # username = driver.find_element_by_id('uname').text
         # self.assertEqual(str(username), "test")
-        # name = driver.find_element_by_id('name').text
-        # self.assertEqual(str(name), "John Doe")
+        # fname = driver.find_element_by_id('fname').text
+        # self.assertEqual(str(fname), "Ryant")
+        # lname = driver.find_element_by_id('lname').text
+        # self.assertEqual(str(lname), "Hummelt")
         # email = driver.find_element_by_id('email').text
-        # self.assertEqual(str(email), "test@umbc.edu")
+        # self.assertEqual(str(email), "example@example.com")
         # instr = driver.find_element_by_id('ins').text
         # self.assertEqual(str(instr), "No")
 

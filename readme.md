@@ -21,6 +21,7 @@ on how to run each test case.
 3.) Selenium tests          :   python3 test.py
 
 Note: Notice that on the 2nd test the server must be running!
+      For the 3rd test you must uncomment the decorator in views.py
 *******************************************************************************************
 
 
