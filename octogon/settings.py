@@ -27,7 +27,7 @@ with open(os.path.join(BASE_DIR, 'secret_key.txt')) as f:
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['octogon-board.herokuapp.com', '.herokuapp.com', '127.0.0.1']
 # ALLOWED_HOSTS = ['.herokuapp.com', 'octogon-board.herokuapp.com]
