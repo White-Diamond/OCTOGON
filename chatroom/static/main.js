@@ -539,7 +539,7 @@ async function main(){
     // poll for new unseen messages
     setInterval(async () => {
         await poll_message(activeUser, getOtherUser());
-    }, 100);
+    }, 150);
 
     // poll for new conversations from classmate list
     setInterval(() => {
