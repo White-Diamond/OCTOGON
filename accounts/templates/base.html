@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html class="no-js" lang="">
 
+{% load static %}
+<head>
+  <link rel="shortcut icon" type="image/jpg" href="{% static 'favicon.ico' %}"/>
+</head>
+
 <body>
   <main>
     {% block content %}

@@ -44,6 +44,8 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
 
             <!-- Loop through the list of all threads in messageboard and display them on
             the left side of the screen each within their own box -->
+            {% load tz %}
+            {% localtime on %}
             {% for thread in threadList %}
             {% if thread.thread_ID == currentThreadNum %}
             <li id="thread{{thread.thread_ID}}" class="list-group-item active" onclick="changeThread(this, {{thread.thread_ID}})" 
@@ -69,6 +71,9 @@ to have to clear the cached stylesheet manually. This can be taken out in produc
                 </div>
             </li>
             {% endfor %}
+            {% endlocaltime %}
+            {% localtime off %}
+            {% endlocaltime %}
         </ul>
         </div>
 

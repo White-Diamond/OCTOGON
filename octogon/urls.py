@@ -11,5 +11,7 @@ urlpatterns = [
     path('chatroom/', include('chatroom.urls')),
     path('accounts/', include('accounts.urls')), # new
     path('accounts/', include('django.contrib.auth.urls')),
+    path('', include('user_profile_db.urls')),
 ]
 
+handler404 = 'accounts.views.error_404_view'

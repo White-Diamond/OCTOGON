@@ -2,30 +2,29 @@
 {% block content %}
 {% load static %}
   <head>
-  <title>Octogon - Online Learning Social Platform</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Octogon - Online Learning Social Platform</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">	
 
-  <link rel="stylesheet" href=" {% static 'home/css/open-iconic-bootstrap.min.css' %} ">
-  <link rel="stylesheet" href=" {% static 'home/css/animate.css' %} ">
+  	<link rel="stylesheet" href=" {% static 'home/css/open-iconic-bootstrap.min.css' %} ">
+  	<link rel="stylesheet" href=" {% static 'home/css/animate.css' %} ">
 
-  <link rel="stylesheet" href=" {% static 'home/css/owl.carousel.min.css' %} ">
-  <link rel="stylesheet" href=" {% static 'home/css/owl.theme.default.min.css' %} ">
-  <link rel="stylesheet" href=" {% static 'home/css/magnific-popup.css' %} ">
+  
+  	<link rel="stylesheet" href=" {% static 'home/css/owl.theme.default.min.css' %} ">
+  	<link rel="stylesheet" href=" {% static 'home/css/magnific-popup.css' %} ">
 
-  <link rel="stylesheet" href=" {% static 'home/css/aos.css' %} ">
+  	<link rel="stylesheet" href=" {% static 'home/css/aos.css' %} ">
 
-  <link rel="stylesheet" href=" {% static 'home/css/ionicons.min.css' %} ">
+  	<link rel="stylesheet" href=" {% static 'home/css/ionicons.min.css' %} ">
 
-	<link rel="stylesheet" href=" {% static 'home/css/bootstrap-datetimepicker.min.css' %} ">
 	<link rel="stylesheet" href=" {% static 'home/css/nouislider.css' %} ">
 
 
-  <link rel="stylesheet" href=" {% static 'home/css/flaticon.css' %} ">
-  <link rel="stylesheet" href=" {% static 'home/css/icomoon.css' %} ">
-  <link rel="stylesheet" href=" {% static 'home/css/style.css' %} ">
+  	<link rel="stylesheet" href=" {% static 'home/css/flaticon.css' %} ">
+  	<link rel="stylesheet" href=" {% static 'home/css/icomoon.css' %} ">
+  	<link rel="stylesheet" href=" {% static 'home/css/style.css' %} ">
 
   </head>
 
@@ -50,7 +49,7 @@
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 
             {% if user.is_authenticated %}
-            <a class="dropdown-item" href="#">
+            <a class="dropdown-item" href="{% url 'messageboard' %}">
               Hi {{ user.username }}!
             </a>
 
@@ -89,21 +88,24 @@
 	      </div>
 		  </div>
 	  </nav>
+	</div>
     <!-- END nav -->
-  	<section class="hero-wrap first-info" style="background-image: url('{% static "home/images/bg_1.jpg"%}')"; data-stellar-background-ratio="0.5">
+  	<section class="hero-wrap first-info" style="background-image: url('{% static 'home/images/bg_1.jpg'%}')" data-stellar-background-ratio="0.5">
   		<div class="overlay">
   		<div class="container">
   			<div class="row description align-items-center justify-content-center">
   				<div class="col-md-8 text-center">
-            <!-- DISPLAY DATE HERE-->
-            <!--class="mb-5" -->
-            <h2 class="mb-5" id="clockDisplay"></h2>
-          </div>
+            		<!-- DISPLAY DATE HERE-->
+					<div  class="col-md-8 text-center">
+					<h2 class="mb-5"  id="clockDisplay"></h2>
+			  		</div>
+            	</div>
   			</div>
   		</div>
-      </div>
+      </div>	  
   	</section>
-
+  
+ 
   	<section class="ftco-section bg-light" id="cards">
 			<div class="container card-styles">
 				<div class="row">
@@ -117,8 +119,8 @@
 						  <div class="card-body pb-5 px-4">
 
 						    <h5 class="card-title">Students Get Started</h5>
-						    <p class="card-text">With supporting text below as a natural lead-in to additional content. A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-						    <a href="#" class="btn btn-info">Go somewhere</a>
+						    <p class="card-text">Octogon is an intuitive platform for instructors to efficiently manage class Q&A. Students can post questions and collaborate to edit responses to these questions.</p>
+						    <a href="{% url 'login' %}" class="btn btn-info">Let's Get Started!</a>
 						  </div>
 						</div>
 					</div>
@@ -131,8 +133,8 @@
 							</div>
 						  <div class="card-body pb-5 px-4">
 						    <h5 class="card-title"> TAs Get Started</h5>
-						    <p class="card-text">With supporting text below as a natural lead-in to additional content. A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-						    <a href="#" class="btn btn-success">Go somewhere</a>
+						    <p class="card-text">Octogon is an intuitive platform for instructors to efficiently manage class Q&A. Students can post questions and collaborate to edit responses to these questions.</p>
+						    <a href="{% url 'login' %}" class="btn btn-success">Let's Get Started!</a>
 						  </div>
 						</div>
 					</div>
@@ -145,8 +147,8 @@
 							</div>
 						  <div class="card-body pb-5 px-4">
 						    <h5 class="card-title">Professors Get Started</h5>
-						    <p class="card-text">With supporting text below as a natural lead-in to additional content. A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
-						    <a href="#" class="btn btn-warning">Go somewhere</a>
+						    <p class="card-text">Octogon is an intuitive platform for instructors to efficiently manage class Q&A. Students can post questions and collaborate to edit responses to these questions.</p>
+						    <a href="{% url 'login' %}" class="btn btn-warning">Let's Get Started!</a>
 						  </div>
 						</div>
 					</div>

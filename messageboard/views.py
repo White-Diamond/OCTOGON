@@ -4,6 +4,7 @@ from django.http import JsonResponse
 
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from accounts.decorators import unauthenticated_user
 # Import "from post.models" all the models from the threads and posts
 # in Ryan's message & post database branch
 from posts.models import Thread
@@ -18,6 +19,7 @@ def basicResponse (request):
 
 
 # View of the main messageboard with NO thread selected
+@unauthenticated_user
 def mainBoard (request):
     # Get all threads
     context = {}
@@ -31,6 +33,7 @@ def mainBoard (request):
 
 
 # View of the main messageboard WITH a thread selected
+@unauthenticated_user
 def getThreadPosts (request, thrdID):
 
     # Check if user is making a post to the current thread
@@ -97,6 +100,7 @@ def getThreadPosts (request, thrdID):
 
 
 # View which allows a users to create a new thread
+@unauthenticated_user
 def userMakesThread (request):
 
     # Check if request in a POST request, else get a blank form.

@@ -10,3 +10,4 @@ db.sqlite3
 **/Lib
 **/Scripts
 **/pyvenv.cfg
+**/migrations

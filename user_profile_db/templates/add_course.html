@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en">
+<h1>Add a Course</h1>
+
+<form action="" method="post">
+	{% csrf_token %}
+	{{ form }}
+	<input type="submit" value="Submit">
+</form>
+<a href="../managecourses">Return to Course Management</a>
+</html>
