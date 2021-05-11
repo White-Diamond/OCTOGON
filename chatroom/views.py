@@ -130,6 +130,6 @@ def update_messages_as_seen(request):
 
 def get_all_student_users(request):
     # username
-    usernameList = User.objects.all().values('username')
+    usernameList = User.objects.filter(groups__name='student').values('username')
     jsonList = json.dumps(list(usernameList))
     return HttpResponse(jsonList)
