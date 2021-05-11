@@ -8,5 +8,6 @@ urlpatterns = [
     path('retrieve_message/', views.retrieve_message),
     path('retrieve_conversation/', views.retrieve_conversation),
     path('retrieve_user_list/', views.retrieve_user_list),
-    path('update_messages_as_seen/', views.update_messages_as_seen)
+    path('update_messages_as_seen/', views.update_messages_as_seen),
+    path('retrieve_all_users/', views.get_all_student_users)
 ]

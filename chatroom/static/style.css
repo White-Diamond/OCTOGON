@@ -1,4 +1,4 @@
-body, html{
+html, body{
     height: 100%;
     width: 100%;
 }
@@ -10,20 +10,20 @@ body, html{
     padding: 5px;
 }
 .sent{
-    float: right;
-    color: white;
-    max-width: 40rem;
-    background-color: rgba(61, 139, 241, 1);
-}
-.received{
     float: left;
     color: black;
     max-width: 40rem;
     background-color: rgba(229, 229, 234, 1);
 }
+.received{
+    float: right;
+    color: white;
+    max-width: 40rem;
+    background-color: rgba(61, 139, 241, 1);
+}
 .separator{
     clear: both;
-    background-color: gray;
+    height: 1rem;
 }
 .message-box{
     max-height: 150px;
