@@ -310,7 +310,6 @@ async function poll_message(activeUser, otherUser){
         const unseenMessages = await fetch_unseen_messages(activeUser, otherUser);
 
         // update DOM
-        console.log(unseenMessages.length);
         for(let i = 0; i < unseenMessages.length; i++){
             let message = unseenMessages[i]['message'];
             console.log(message);
@@ -539,22 +538,22 @@ async function main(){
      */
 
     // poll for new unseen messages
-    setInterval(() => {
-        poll_message(activeUser, getOtherUser());
+    setInterval(async () => {
+        await poll_message(activeUser, getOtherUser());
     }, 100);
 
     // poll for new conversations from classmate list
     setInterval(() => {
-        classmates.forEach( (classmate) => {
-            poll_conversation_from_classmatesList(activeUser, classmate, otherUsers, classmates);
+        classmates.forEach( async (classmate) => {
+            await poll_conversation_from_classmatesList(activeUser, classmate, otherUsers, classmates);
         }); 
     }, 400);
 
     // poll for new conversations from otherUsers list
     setInterval(() => {
-        otherUsers.forEach( (otherUserObj) => {
+        otherUsers.forEach( async (otherUserObj) => {
             if (otherUserObj.has_notification === false && otherUserObj.other_user !== getOtherUser()) {
-                poll_conversation_from_otherUsersList(activeUser, otherUserObj.other_user, otherUsers);
+                await poll_conversation_from_otherUsersList(activeUser, otherUserObj.other_user, otherUsers);
             }
         }); 
     }, 400);
