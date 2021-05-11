@@ -5,8 +5,8 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
 </head>
 <body>
-<!-- NAVBAR -->
-    <nav class="navbar navbar-expand-xl bg-light">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-xl bg-light" style="height: 7vh; border-bottom: 2px solid #c4c4c4;">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a style="font-size: 40px; font-weight: 700;" class="navbar-brand" href="{% url 'login' %}">OCTOGON</a>
@@ -17,12 +17,15 @@
                 </li>
                 <li class="nav-item"><a id="chatroom-link" class="nav-link" href="{% url 'chatroom-page' %}">Chatroom</a></li>
                 <li class="nav-item"><a id="profile-link" class="nav-link" href="{% url 'index' %}">My Profile</a></li>
-				<li class="nav-item"><a id="coursechange-link" class="nav-link" href="/managecourses">Manage My Courses</a></li>
+                <li class="nav-item"><a id="coursechange-link" class="nav-link" href="/managecourses">Manage My Courses</a></li>
             </ul>
         </div>
     </nav>
-<h1>Course Selection and removal</h1>
-<a href="/addcourse">Add a Course</a>
-<a href="/removecourse">Remove a Course</a>
+
+    <div class="text-center pt-3">
+        <h1 >Course Selection and Removal</h1>
+        <a class="btn btn-primary" href="/addcourse">Add a Course</a>
+        <a class="btn btn-danger" href="/removecourse">Remove a Course</a>
+    </div>
 </body>
 </html>
