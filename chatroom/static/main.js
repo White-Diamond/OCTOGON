@@ -312,7 +312,6 @@ async function poll_message(activeUser, otherUser){
         // update DOM
         for(let i = 0; i < unseenMessages.length; i++){
             let message = unseenMessages[i]['message'];
-            console.log(message);
             chainRecievedMessageToMessageDiv(message);
         }
 
