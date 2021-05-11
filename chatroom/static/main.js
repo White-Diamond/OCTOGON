@@ -310,8 +310,10 @@ async function poll_message(activeUser, otherUser){
         const unseenMessages = await fetch_unseen_messages(activeUser, otherUser);
 
         // update DOM
+        console.log(unseenMessages.length);
         for(let i = 0; i < unseenMessages.length; i++){
             let message = unseenMessages[i]['message'];
+            console.log(message);
             chainRecievedMessageToMessageDiv(message);
         }
 
