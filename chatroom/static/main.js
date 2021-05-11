@@ -520,15 +520,15 @@ async function main(){
     // add-new-user button event
     modal_btn.addEventListener('click', (e) => { attachClassmateListToModalDiv(classmates); }, false);
     // modal button event
-    modalClassmateArea_div.addEventListener('click', (e) => { modalButtonEvent(e, activeUser, classmates, otherUsers); }, false);
+    modalClassmateArea_div.addEventListener('click', (e) => { await modalButtonEvent(e, activeUser, classmates, otherUsers); }, false);
     // user button event
-    userArea_div.addEventListener('click', (e) => { userButtonEvents(e, activeUser, otherUsers, classmates); }, false);
+    userArea_div.addEventListener('click', (e) => { await userButtonEvents(e, activeUser, otherUsers, classmates); }, false);
     // message input area event
     textSubmitArea_div.addEventListener('keypress', (e) => { inputMessageEvent(e, activeUser, getOtherUser()); }, false);
     // search bar event
     searchBar_input.addEventListener('input', (e)=>{ searchBarEvent(e, otherUsers); }, false);
     // close window event
-    window.addEventListener('beforeunload', (e)=>{ unloadEvent(e, activeUser, otherUsers); }, false);
+    window.addEventListener('beforeunload', (e)=>{ await unloadEvent(e, activeUser, otherUsers); }, false);
 
     /*
      * The below pollings represent retrievals of new, unseen messages. Therefore, a blue
