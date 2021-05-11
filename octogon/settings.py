@@ -137,6 +137,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 django_heroku.settings(locals())
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # # HTTPS settings
 # SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SECURE = True
@@ -146,5 +147,3 @@ django_heroku.settings(locals())
 # SECURE_HSTS_SECONDS = 31536000 # 1 YEAR
 # SECURE_HSTS_PRELOAD = True
 # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

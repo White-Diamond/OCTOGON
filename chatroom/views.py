@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.http import HttpResponse
+from django.utils import timezone
 from .models import Message, UserList
+from django.contrib.auth.models import User
 from accounts.decorators import unauthenticated_user
 import json
 
@@ -22,9 +24,15 @@ def retrieve_conversation(request):
 
     if(chat1.exists() or chat2.exists()):
         # get conversation
-        conversation = chat1.union(chat2).order_by('created_at').values('message', 'to_id', 'from_id', 'seen')
-        # convert from QuerySet to JSON string
-        jsonMessages = json.dumps(list(conversation))
+        conversation = chat1.union(chat2).order_by('created_at').values('message', 'to_id', 'from_id', 'seen', 'created_at')
+        # convert from QuerySet to list
+        conversationList = list(conversation)
+        # convert to date time
+        for message in conversationList:
+            utc_time = message['created_at']
+            message['created_at'] = utc_time.strftime("%m/%d/%Y, %H:%M")
+        # convert to JSON string
+        jsonMessages = json.dumps(list(conversationList))
 
         return HttpResponse(jsonMessages)
 
@@ -42,9 +50,15 @@ def retrieve_message(request):
 
     if(chat.exists()):
         # get an ordered QuerySet of all unseen messages
-        orderedMessagesByDate = chat.filter(seen=0).order_by('created_at').values('message')
-        # convert from QuerySet to JSON string
-        jsonMessages = json.dumps(list(orderedMessagesByDate))
+        orderedMessagesByDate = chat.filter(seen=0).order_by('created_at').values('message', 'created_at')
+        # convert from QuerySet to list
+        messageList = list(orderedMessagesByDate)
+        # convert to date time
+        for message in messageList:
+            utc_time = message['created_at']
+            message['created_at'] = utc_time.strftime("%m/%d/%Y, %H:%M")
+        # convert to JSON string
+        jsonMessages = json.dumps(messageList)
 
         return HttpResponse(jsonMessages)
 
@@ -113,3 +127,9 @@ def update_messages_as_seen(request):
         chat2.update(seen=1)
 
     return HttpResponse("OK")
+
+def get_all_student_users(request):
+    # username
+    usernameList = User.objects.all().values('username')
+    jsonList = json.dumps(list(usernameList))
+    return HttpResponse(jsonList)

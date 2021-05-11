@@ -19,6 +19,25 @@ function closest(elem, tagname){
     } while (elem);
 }
 
+function create_post_request(body) {
+    const request = {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest', 
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify(body)
+    };
+
+    return request;
+}
+
+function localize_time(utc_time) {
+    let date = new Date(utc_time + ' UTC');
+    return date;
+}
 
 /*
 ***********************************************************************
@@ -33,6 +52,7 @@ let textSubmitArea_div = document.getElementById("text-submit");
 let modalClassmateArea_div = document.getElementById("modal-classmate-area");
 let modal_btn = document.getElementById("modal-button");
 let searchBar_input = document.getElementById("search-bar");
+let activeUserArea_div = document.getElementById("active-user-area");
 
 /*
 ***********************************************************************
@@ -54,15 +74,18 @@ let createToElem = function(to){
     return `<p class="fs-4 p-0 m-0">To: <span id="recipient-area">${to}</span></p>`
 }
 let createSentMessageElem = function(message){
-    return `<p class="chat-bubble received text-wrap">${message}</p>
+    return `<div class="chat-bubble sent text-wrap">${message}</div>
             <div class="separator"></div>`;
 }
 let createReceivedMessageElem = function(message){
-    return `<p class="chat-bubble sent text-wrap">${message}</p>
+    return `<div class="chat-bubble received text-wrap">${message}</div>
             <div class="separator"></div>`;
 } 
 let createModalClassmateElem = function(classmate){
     return `<button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="modal">${classmate}</button>`;
+} 
+let createDateTimeElem = function(datetime){
+    return `<div class="text-center text-black-50" style="font-size: 0.8rem;">${datetime}</div>`;
 } 
 
 /*
@@ -73,31 +96,24 @@ INIT FUNCTIONS
 
 function getActiveUser(){
 
-        /*
-         * Right now this is just dummy data but in the future
-         * this information should be retrieved from the student model
-         */
+    /*
+     * Right now this is just dummy data but in the future
+     * this information should be retrieved from the student model
+     */
 
-    let email = prompt("Enter your name: ");
-    return email;
+    let username = activeUserArea_div.children[0].children[0].innerHTML;
+    return username;
 }
 
-function getClassmates(activeUser){
+async function getClassmates(activeUser){
 
-        /*
-         * Right now this is just dummy data but in the future
-         * this information should be retrieved from the backend database
-         */
+    /*
+     * Right now this is just dummy data but in the future
+     * this information should be retrieved from the backend database
+     */
         
-    let classmates = [
-        "jacob",
-        "ben",
-        "mark",
-        "donny",
-        "bill",
-        "joe",
-        "gage"
-    ];
+    let jsonArray = await fetch_all_users();
+    let classmates = jsonArray.map( (jsonObject) => { return jsonObject.username} );
 
     // remove active user from list
     classmates.splice(classmates.indexOf(activeUser), 1);
@@ -127,8 +143,17 @@ ATTACH/CHAIN DYNAMIC HTML ELEMENTS TO DOM
 */
 
 function attachMessageListToMessageDiv(messages, user){
+    let postedDate = 0;
+    let fiveMinutes = 300000 // milliseconds
+
     // create HTML list
     let htmlList = messages.reduce( (htmlList, messageObj)=> {
+        let newDate = localize_time(messageObj.created_at);
+        if (newDate - postedDate > fiveMinutes) {
+            htmlList += createDateTimeElem(newDate.toLocaleString('en-US'));            
+            postedDate = newDate;
+        }
+
         if(messageObj.from_id === user){
             htmlList += createReceivedMessageElem(messageObj.message);
         } else{
@@ -195,20 +220,10 @@ DATABASE CONNECTION FUNCTIONS
 
 async function fetch_conversation(activeUser, otherUser){
     // POST- update db
-    const request = {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest', 
-            'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({
-            from: activeUser,
-            to: otherUser
-        })
-    };
-
+    const request = create_post_request({
+        from: activeUser,
+        to: otherUser
+    });
     const response = await fetch('retrieve_conversation/', request);
     const messageList = await response.json();
 
@@ -217,41 +232,28 @@ async function fetch_conversation(activeUser, otherUser){
 
 async function fetch_user_list(activeUser){
     // POST- update db
-    const request = {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest', 
-            'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({
-            activeUser
-        })
-    };
-
+    const request = create_post_request({
+        activeUser
+    });
     const response = await fetch('retrieve_user_list/', request);
     const jsonArray = await response.json();
 
     return jsonArray;
 }
 
+async function fetch_all_users(){
+    // GET- from db
+    const response = await fetch('retrieve_all_users/');
+    const jsonArray = await response.json();
+    return jsonArray;
+}
+
 async function fetch_unseen_messages(activeUser, otherUser){
     // POST- retrieve from db
-    const request = {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest', 
-            'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({
-            from: otherUser,
-            to: activeUser
-        })
-    };
-
+    const request = create_post_request({
+        from: otherUser,
+        to: activeUser
+    });
     // retrieve all unseen messages sent from other user to active user
     const response = await fetch('retrieve_message/', request);
     const jsonArray = await response.json();
@@ -261,39 +263,19 @@ async function fetch_unseen_messages(activeUser, otherUser){
 
 async function update_messages_as_seen(activeUser, otherUser) {
     // POST- update db
-    const request = {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest', 
-            'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({
-            from: activeUser,
-            to: otherUser
-        })
-    };
-    
+    const request = create_post_request({
+        from: activeUser,
+        to: otherUser
+    });
     const response = await fetch('update_messages_as_seen/', request);
 }
 
 async function send_user_list(activeUser, otherUsers){
     // POST- update db
-    const request = {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest', 
-            'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({
-            activeUser,
-            otherUsers
-        })
-    };
-
+    const request = create_post_request({
+        activeUser,
+        otherUsers
+    });
     const response = await fetch('load_user_list/', request);
 }
 
@@ -302,23 +284,19 @@ async function send_message(message, activeUser, otherUser){
     chainSentMessageToMessageDiv(message);
 
     // POST- update db
-    const request = {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest', 
-            'X-CSRFToken': csrftoken
-        },
-        body: JSON.stringify({
-            message: message,
-            from: activeUser,
-            to: otherUser
-        })
-    };
-
+    const request = create_post_request({
+        message: message,
+        from: activeUser,
+        to: otherUser
+    });
     const response = await fetch('load_message/', request);
 }
+
+/*
+***********************************************************************
+POLLING
+***********************************************************************
+*/
 
 async function poll_message(activeUser, otherUser){
 
@@ -449,8 +427,10 @@ async function userButtonEvents(e, activeUser, otherUsers, classmates){
             const messageList = await fetch_conversation(activeUser, nextOtherUserName);
             attachMessageListToMessageDiv(messageList, nextOtherUserName);
             // update unseen messages
-            const response = await update_messages_as_seen(activeUser, otherUserName);
+            const response = await update_messages_as_seen(activeUser, nextOtherUserName);
         }
+        // must update unseen messages
+        const response = await update_messages_as_seen(activeUser, otherUserName);
     } else{
         // update DOM
         const messageList = await fetch_conversation(activeUser, otherUserName);
@@ -531,7 +511,7 @@ async function unloadEvent(e, activeUser, otherUsers){
 async function main(){
     // get active user, classmates, and a list of other users
     let activeUser = getActiveUser();
-    let classmates = getClassmates(activeUser);
+    let classmates = await getClassmates(activeUser);
     let otherUsers = await getUserList(activeUser, classmates);
 
     // default DOM updates
@@ -550,16 +530,16 @@ async function main(){
     // close window event
     window.addEventListener('beforeunload', (e)=>{ unloadEvent(e, activeUser, otherUsers); }, false);
 
-    // poll for new messages
-    setInterval(() => {
-        poll_message(activeUser, getOtherUser());
-    }, 100);
-
     /*
      * The below pollings represent retrievals of new, unseen messages. Therefore, a blue
      * dot to the left of the user name and profile icon should be displayed upon every
      * new message.
      */
+
+    // poll for new unseen messages
+    setInterval(() => {
+        poll_message(activeUser, getOtherUser());
+    }, 100);
 
     // poll for new conversations from classmate list
     setInterval(() => {
@@ -579,8 +559,7 @@ async function main(){
 }
 
 // APP
-// 1.) create a helper function for post requests
-// 4.) For next feature, due timestamp!
+// 1.) For next feature, do timestamp!
 
 // UI:
 // 1.) Make sidebar card a bluish color with white text
